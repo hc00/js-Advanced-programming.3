@@ -82,6 +82,8 @@
 			var filter = function(node){
 				return node.tagName.toLowerCase() == "li" ?	NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
 			};
+
+			//由于 nextNode()和 previousNode()方法都基于 NodeIterator 在 DOM 结构中的内部指针工作，所以 DOM 结构的变化会反映在遍历的结果中
 		};
 	</script>
 </body>
