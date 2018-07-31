@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>模仿块级作用域</title>
+</head>
+<body>
+	<div></div>
+
+	<script>
+		{
+			//JavaScript 没有块级作用域的概念。这意味着在块语句中定义的变量，实际上是在包含函数中而非语句中创建的
+			/*es6已扩展块级作用域*/
+
+			function outputNumbers(count){
+				for (var i=0; i < count; i++){
+					alert(i);
+				};
+				var i;
+				console.log(i); //计数
+			};
+			outputNumbers(3);
+			/*JavaScript 从来不会告诉你是否多次声明了同一个变量；遇到这种情况，它只会对后续的声明视而不见（不过，它会执行后续声明中的变量初始化）。匿名函数可以用来模仿块级作用域并避免这个问题*/
+
+			function outputNumbers(count){
+				(function () {
+					for (var i=0; i < count; i++){
+						alert(i);
+					}
+				})();
+				alert(i); //导致一个错误！
+			};
+			//这种技术经常在全局作用域中被用在函数外部，从而限制向全局作用域中添加过多的变量和函数。一般来说，我们都应该尽量少向全局作用域中添加变量和函数。在一个由很多开发人员共同参与的大型应用程序中，过多的全局变量和函数很容易导致命名冲突。而通过创建私有作用域，每个开发人员既可以使用自己的变量，又不必担心搞乱全局作用域。例如：
+			(function(){
+				var now = new Date();
+				if (now.getMonth() == 0 && now.getDate() == 1){
+					alert("Happy new year!");
+				};
+			})();
+
+		}
+	</script>
+</body>
+</html>

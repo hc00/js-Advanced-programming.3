@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>遍历</title>
+</head>
+<body>
+	<div class="wrapper">
+		<div id="box" class="box">
+			<span>this is a box!</span>
+		</div>
+		<div id="div1">
+			<p><b>Hello</b> world!</p>
+			<ul>
+				<li>List item 1</li>
+				<li>List item 2</li>
+				<li>List item 3</li>
+			</ul>
+		</div>
+	</div>
+	<script type="text/javascript">
+		/*12.3 遍历*/
+		//“DOM2 级遍历和范围”模块定义了两个用于辅助完成顺序遍历 DOM 结构的类型： NodeIterator和 TreeWalker。
+		//这两个类型能够基于给定的起点对 DOM 结构执行深度优先（depth-first）的遍历操作。在与 DOM 兼容的浏览器中（Firefox 1 及更高版本、 Safari 1.3 及更高版本、 Opera 7.6 及更高版本、 Chrome0.2 及更高版本），都可以访问到这些类型的对象。 IE 不支持 DOM 遍历。使用下列代码可以检测浏览器对 DOM2 级遍历能力的支持情况。
+		
+		var supportsTraversals = document.implementation.hasFeature("Traversal", "2.0");
+		var supportsNodeIterator = (typeof document.createNodeIterator == "function");
+		var supportsTreeWalker = (typeof document.createTreeWalker == "function");
+		//如前所述， DOM 遍历是深度优先的 DOM 结构遍历，也就是说，移动的方向至少有两个（取决于使用的遍历类型）。遍历以给定节点为根，不可能向上超出 DOM 树的根节点
+		//任何节点都可以作为遍历的根节点
+		
+		{
+			/*12.3.1 NodeIterator
+				*NodeIterator 类型是两者中比较简单的一个，可以使用 document.createNodeIterator()方法创建它的新实例;接受4个参数	
+				*
+					*root：想要作为搜索起点的树中的节点。
+	 				*whatToShow：表示要访问哪些节点的数字代码。 
+					*filter：是一个 NodeFilter 对象，或者一个表示应该接受还是拒绝某种特定节点的函数。 (如果不指定过滤器，那么应该在第三个参数的位置上传入 null)
+					*entityReferenceExpansion：布尔值，表示是否要扩展实体引用。这个参数在 HTML 页面中没有用，因为其中的实体引用不能扩展。
+				*
+				* 
+					*whatToShow 参数是一个位掩码，通过应用一或多个过滤器（filter）来确定要访问哪些节点。这个参数的值以常量形式在 NodeFilter 类型中定义，如下所示。 
+						*NodeFilter.SHOW_ALL：显示所有类型的节点。 
+						*NodeFilter.SHOW_ELEMENT：显示元素节点。 
+						*NodeFilter.SHOW_ATTRIBUTE：显示特性节点。由于 DOM 结构原因，实际上不能使用这个值。 
+						*NodeFilter.SHOW_TEXT：显示文本节点。 
+						*NodeFilter.SHOW_CDATA_SECTION：显示 CDATA 节点。对 HTML 页面没有用。
+						*NodeFilter.SHOW_ENTITY_REFERENCE：显示实体引用节点。对 HTML 页面没有用。 
+						*NodeFilter.SHOW_ENTITYE：显示实体节点。对 HTML 页面没有用。 
+						*NodeFilter.SHOW_PROCESSING_INSTRUCTION：显示处理指令节点。对 HTML 页面没有用。 
+						*NodeFilter.SHOW_COMMENT：显示注释节点。 
+						*NodeFilter.SHOW_DOCUMENT：显示文档节点。 
+						*NodeFilter.SHOW_DOCUMENT_TYPE：显示文档类型节点。 
+						*NodeFilter.SHOW_DOCUMENT_FRAGMENT：显示文档片段节点。对 HTML 页面没有用。 
+						*NodeFilter.SHOW_NOTATION：显示符号节点。对 HTML 页面没有用
+				*NodeIterator 类型的两个主要方法是 nextNode()和 previousNode()
+				*nextNode()方法用于向前前进一步，而 previousNode()用于向后后退一步
+			*/
+		
+			/*可以通过 createNodeIterator()方法的 filter 参数来指定自定义的 NodeFilter 对象，或者指定一个功能类似节点过滤器（node filter）的函数。
+			*每个 NodeFilter 对象只有一个方法，即 acceptNode()；
+				*如果应该访问给定的节点，该方法返回 NodeFilter.FILTER_ACCEPT，
+				*如果不应该访问给定的节点，该方法返回 NodeFilter.FILTER_SKIP。
+			*由于 NodeFilter 是一个抽象的类型，因此不能直接创建它的实例。在必要时，只要创建一个包含 acceptNode()方法的对象，然后将这个对象传入createNodeIterator()中即可*/
+			var nodeFilter = {
+				acceptNode: function(node){
+					return node.tagName.toLowerCase() == "p" ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+				}
+			};
+
+			//假设我们想要遍历<div>元素中的所有元素，那么可以使用下列代码。
+			var div = document.getElementById("div1");
+			var iterator = document.createNodeIterator(div, NodeFilter.SHOW_ELEMENT,null, false);
+			var node = iterator.nextNode();
+			while (node !== null) {
+				console.log(node.tagName); //输出标签名
+				node = iterator.nextNode();
+			};
+			//DIV P B Ul LI LI LI
+			
+			//过滤出所有的li 元素
+			var filter = function(node){
+				return node.tagName.toLowerCase() == "li" ?	NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+			};
+		};
+	</script>
+</body>
+</html>

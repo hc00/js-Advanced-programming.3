@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>动态脚本</title>
+</head>
+<body>
+	<div class="wrapper">
+		<div class="box">
+			<p>
+				<span>asdfghjkl</span>
+			</p>
+		</div>
+		<ul id="list">
+			<li>1</li>
+			<li>2</li>
+			<li>3</li>
+			<li>4</li>
+		</ul>
+	</div>
+
+	<script>
+		{
+			/*
+			*使用<script>元素可以向页面中插入 JavaScript 代码，一种方式是通过其 src 特性包含外部文件，另一种方式就是用这个元素本身来包含代码。
+			*而动态脚本，指的是在页面加载时不存在，但将来的某一时刻通过修改 DOM 动态添加的脚本。
+			*跟操作 HTML 元素一样，创建动态脚本也有两种方式：插入外部文件和直接插入 JavaScript 代码
+			 */
+			//动态加载的外部 JavaScript 文件能够立即运行
+			//`<script type="text/javascript" src="client.js"><\/script>`
+			function loadScript(url){
+				var script = document.createElement("script");
+				script.type = "text/javascript";
+				script.src = url;
+				document.body.appendChild(script);
+			};
+
+			/*var script = document.createElement("script");
+			script.type = "text/javascript";
+			// script.appendChild(document.createTextNode("function sayHi(){alert('hi');}"));
+			script.text = "function sayHi(){alert('hi');}";
+			document.body.appendChild(script);*/
+
+			function loadScriptString(code){
+				var script = document.createElement("script");
+				script.type = "text/javascript";
+				try {
+					script.appendChild(document.createTextNode(code));
+				} catch (ex){
+					script.text = code;
+				};
+				document.body.appendChild(script);
+			};
+
+		//10.2.2动态样式
+			//使用 DOM 代码可以很容易地动态创建出这个元素：
+			var link = document.createElement("link");
+			link.rel = "stylesheet";
+			link.type = "text/css";
+			link.href = "style.css";
+			var head = document.getElementsByTagName("head")[0];
+			// head.appendChild(link);
+			
+			function loadStyles(url){
+				var link = document.createElement("link");
+				link.rel = "stylesheet";
+				link.type = "text/css";
+				link.href = url;
+				var head = document.getElementsByTagName("head")[0];
+				head.appendChild(link);
+			};
+		}
+	</script>
+</body>
+</html>

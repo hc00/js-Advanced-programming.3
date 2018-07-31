@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>专有扩展</title>
+</head>
+<body>
+	<div class="wrapper">
+		<div id="box" >
+			<span style='color:skyblue;'>♤♡♢♧</span>
+		</div>		
+	</div>
+	<script>
+		{
+			/*11.4.3	contains()方法
+				*调用 contains()方法的应该是祖先节点，也就是搜索开始的节点，这个方法接收一个参数，即要检测的后代节点。
+				*如果被检测的节点是后代节点，该方法返回 true；否则，返回 false
+				*
+			* ▲▲▲♤♡♢♧使用 DOM Level 3 compareDocumentPosition()也能够确定节点间的关系
+				*这个方法用于确定两个节点间的关系，返回一个表示该关系的位掩码 
+				*1 		无关（给定的节点不在当前文档中）
+				*2 		居前（给定的节点在DOM树中位于参考节点之前）
+				*4 		居后（给定的节点在DOM树中位于参考节点之后）
+				*8 		包含（给定的节点是参考节点的祖先）
+				*16 	被包含（给定的节点是参考节点的后代）
+				*a.compareDocumentPosition(b);		//a为参考节点，b为给定节点
+			*/
+			alert(document.documentElement.contains(document.body));
+
+			//为模仿 contains()方法，应该关注的是掩码 16。可以对 compareDocumentPosition()的结果执行按位与，以确定参考节点（调用 compareDocumentPosition()方法的当前节点）是否包含给定的节点（传入的节点）
+			var result = document.documentElement.compareDocumentPosition(document.body);
+			alert(!!(result & 16));
+			//执行上面的代码后，结果会变成 20（表示“居后”的 4 加上表示“被包含”的 16）。
+			//对掩码 16 执行按位操作会返回一个非零数值，而两个逻辑非操作符会将该数值转换成布尔值
+			
+			//确定一个节点是不是另一个节点的后代
+			//refNode参考节点；otherNode要检查的节点
+			function contains(refNode, otherNode){
+				//client 	详见9.3-navigator-userAgent.html
+				if (typeof refNode.contains == "function" && (!client.engine.webkit || client.engine.webkit >= 522)){
+					return refNode.contains(otherNode);
+				} else if (typeof refNode.compareDocumentPosition == "function"){
+					return !!(refNode.compareDocumentPosition(otherNode) & 16);
+				} else {
+					var node = otherNode.parentNode;
+					do {
+						if (node === refNode){
+							return true;
+						} else {
+							node = node.parentNode;
+						}
+					} while (node !== null);
+					return false;
+				}
+			};
+			{
+				/*
+				*设置 innerText 永远只会生成当前节点的一个子文本节点，而为了确保只生成一个子文本节点，就必须要对文本进行 HTML 编码。
+				*▲▲▲▲▲▲利用这一点，可以通过 innerText 属性过滤掉 HTML 标签。方法是将 innerText 设置为等于 innerText，这样就可以去掉所有 HTML 标签，比如：
+				div.innerText = div.innerText;
+				*执行这行代码后，就用原来的文本内容替换了容器元素中的所有内容（包括子节点，因而也就去掉了 HTML 标签）
+				*
+				* textContent 是 DOM Level 3 规定的一个属性;作用类似innerText
+				 */
+				var box = document.getElementById('box');		//<div id="box"><span>♤♡♢♧</span></div>
+				box.innerText = box.innerText;					//<div id="box">♤♡♢♧</div>
+				console.log(box.textContent);
+
+				//实际上， innerText 与 textContent 返回的内容并不完全一样。比如，innerText 会忽略行内的样式和脚本，而 textContent 则会像返回其他文本一样返回行内的样式和脚本代码。避免跨浏览器兼容问题的最佳途径，就是从不包含行内样式或行内脚本的 DOM 子树副本或 DOM 片段中读取文本
+
+
+			}
+		};
+	</script>
+</body>
+</html>

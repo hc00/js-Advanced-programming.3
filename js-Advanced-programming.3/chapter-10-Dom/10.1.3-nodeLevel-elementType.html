@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>element类型</title>
+	<style>
+		.bd{
+			font-size: 16px;
+		}
+	</style>
+</head>
+<body>
+	<div id="wrapper">
+		<div id="myDiv" class="bd" title="Body text" lang="en" dir="ltr" data-id = '01'>
+			&lt;div id="myDiv" class="bd" title="Body text" lang="en" dir="ltr"&gt;
+		</div>
+		<s>s删除线</s>&nbsp;&nbsp;<u>u下划线</u>&nbsp;&nbsp;<i>i倾斜</i>&nbsp;&nbsp;<del>del</del>
+	</div>
+	<script>
+			var div = document.getElementById("myDiv");
+			//获取class
+			div.className;
+			div.getAttribute('class');
+			div.attributes.getNamedItem('class').nodeValue;
+			div.attributes['class'].nodeValue;
+			div.classList.value;
+
+
+		(function(){
+			/* 
+			*除了 Document 类型之外， Element 类型就要算是 Web 编程中最常用的类型了。 Element 类型用于表现 XML 或 HTML 元素，提供了对元素标签名、子节点及特性的访问
+			*nodeType 的值为 1；
+			*nodeName 的值为元素的标签名
+			*nodeValue 的值为 null；
+			*parentNode 可能是 Document 或 Element；
+			*其子节点可能是 Element、 Text、 Comment、 ProcessingInstruction、 CDATASection 或EntityReference
+			*☺☺☺※※※在 HTML 中，标签名始终都以全部大写表示
+			**/
+			//要访问元素的标签名，可以使用 nodeName 属性，也可以使用 tagName 属性；这两个属性会返回相同的值（使用后者主要是为了清晰起见）
+			
+			var div1 = document.getElementById('wrapper');
+			console.log(div1.nodeName,div1.tagName,div1);	//DIV
+			'div'.toUpperCase();		//转化大写
+			'DIV'.toLowerCase();		//转化小写
+
+			/*1、HTML元素
+				*所有 HTML 元素都由 HTMLElement 类型表示，不是直接通过这个类型，也是通过它的子类型来表示。HTMLElement 类型直接继承自 Element 并添加了一些属性。添加的这些属性分别对应于每个 HTML元素中都存在的下列标准特性
+				*id，元素在文档中的唯一标识符
+				*title，有关元素的附加说明信息，一般通过工具提示条显示出来
+				*lang，元素内容的语言代码，很少使用
+				*dir，语言的方向，值为"ltr"（ left-to-right，从左至右）或"rtl"（ right-to-left，从右至左），也很少使用
+				*className，与元素的 class 特性对应，即为元素指定的 CSS 类。没有将这个属性命名为 class，是因为 class 是 ECMAScript 的保留字
+			*/
+			
+			var div = document.getElementById("myDiv");
+			console.log(div.id); //"myDiv""
+			console.log(div.className); //"bd"
+			console.log(div.title); //"Body text"
+			console.log(div.lang); //"en"
+			console.log(div.dir); //"ltr
+
+			/*2、取得特性
+				*每个元素都有一或多个特性，这些特性的用途是给出相应元素或其内容的附加信息
+				*操作特性的DOM 方法主要有三个，分别是 getAttribute()、 setAttribute()和 removeAttribute()
+				*这三个方法可以针对任何特性使用，包括那些以 HTMLElement 类型属性的形式定义的特性
+				*
+				* 注意，传递给 getAttribute()的特性名与实际的特性名相同。因此要想得到 class 特性值，应该传入"class"而不是"className"，后者只有在通过对象属性访问特性时才用
+				* 如果给定名称的特性不存在， getAttribute()返回 null
+				* getAttribute()方法也可以取得自定义特性（即标准 HTML 语言中没有的特性）的值
+			*/
+		
+			// var div = document.getElementById("myDiv");
+			console.log(div.getAttribute("id")); //"myDiv"
+			console.log(div.getAttribute("class")); //"bd"
+			console.log(div.getAttribute("title")); //"Body text"
+			console.log(div.getAttribute("lang")); //"en"
+			console.log(div.getAttribute("dir")); //"ltr"
+
+			console.log(div.getAttribute('data-ID'));	//自定义特性的名称是不区分大小写
+
+
+			/*3、设置特性
+				*setAttribute()，这个方法接受两个参数：要设置的特性名和值。
+				*如果特性已经存在， setAttribute()会以指定的值替换现有的值；如果特性不存在， setAttribute()则创建该属性并设置相应的值
+				*既可以操作 HTML 特性也可以操作自定义特性
+			*/
+		
+			div.setAttribute("class", "ft");
+			div.setAttribute("data-id", "02");
+
+			//因为所有特性都是属性，所以直接给属性赋值可以设置特性的值;(自定义属性不可通过.号赋值)
+			div.align = "right";
+
+			//removeAttribute();
+			//用于彻底删除元素的特性。调用这个方法不仅会清除特性的值，而且也会从元素中完全删除特性
+			
+			div.removeAttribute('lang')
+
+			/*4、attribute属性
+				*Element 类型是使用 attributes 属性的唯一一个 DOM 节点类型。 attributes 属性中包含一个NamedNodeMap，与 NodeList 类似，也是一个“动态”的集合。元素的每一个特性都由一个 Attr 节点表示，每个节点都保存在 NamedNodeMap 对象中
+				*
+				* getNamedItem(name)：返回 nodeName 属性等于 name 的节点
+				* removeNamedItem(name)：从列表中移除 nodeName 属性等于 name 的节点；
+				* setNamedItem(node)：向列表中添加节点，以节点的 nodeName 属性为索引；
+				* item(pos)：返回位于数字 pos 位置处的节点。
+				*
+				* attributes 属性中包含一系列节点，每个节点的 nodeName 就是特性的名称， 而节点的 nodeValue就是特性的值
+			*/
+			//要取得元素的 id 特性，可以使用以下代码。
+			var id = div.attributes.getNamedItem("id").nodeValue;	
+			 id = div.attributes["id"].nodeValue;
+			div.attributes[0];		//id='myDiv'
+
+			//获取class
+			div.className;
+			div.getAttribute('class');
+			div.attributes.getNamedItem('class').nodeValue;
+			div.attributes['class'].nodeValue;
+			div.classList.value;
+
+			//removeNamedItem()方法与在元素上调用 removeAttribute()方法的效果相同——直接删除具有给定名称的特性
+			var oldAttr = div.attributes.removeNamedItem("dir");
+
+			function outputAttributes(element){
+				var pairs = new Array(),attrName,attrValue,i,len;
+				for (i=0, len=element.attributes.length; i < len; i++){
+					attrName = element.attributes[i].nodeName;
+					attrValue = element.attributes[i].nodeValue;
+					pairs.push(attrName + "=\"" + attrValue + "\"");
+
+					//兼容ie7
+					/*if (element.attributes[i].specified) {
+						pairs.push(attrName + "=\"" + attrValue + "\"");
+					}*/
+				};
+				return pairs.join(" ");
+			};
+			console.log(outputAttributes(div));		//id="myDiv" class="ft" title="Body text" data-id="02" align="right"
+
+
+			var div1 = document.createElement("div");
+			console.log(div1.ownerDocument);
+		})();
+	</script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document类型</title>
+	<style>
+		.color li{
+			list-style: none;
+		}
+	</style>
+</head>
+<body>
+	<div class="wrapper">
+		<div id="box">
+			<p class="p1">文字段落</p>
+			<ul>
+				<li name='firstLi'>1</li>
+				<li>2</li>
+				<li>3</li>
+				<li>4</li>
+			</ul>
+			<fieldset>
+			<legend>Which color do you prefer?</legend>
+				<ul class="color">
+					<li><input type="radio" value="red" name="color" id="colorRed">
+					<label for="colorRed">Red</label></li>
+					<li><input type="radio" value="green" name="color" id="colorGreen" checked>
+					<label for="colorGreen">Green</label></li>
+					<li><input type="radio" value="blue" name="color" id="colorBlue">
+					<label for="colorBlue">Blue</label></li>
+				</ul>
+			</fieldset>
+		</div>
+	</div>
+
+	<script>
+		/*
+		*JavaScript 通过 Document 类型表示文档。
+		*在浏览器中， document 对象是 HTMLDocument（继承自 Document 类型）的一个实例，表示整个 HTML 页面。
+		*而且， document 对象是 window 对象的一个属性，因此可以将其作为全局对象来访问
+		*
+		*nodeType 的值为 9；
+		*nodeName 的值为"#document"； 
+		*nodeValue 的值为 null；
+		*parentNode 的值为 null；
+		*ownerDocument 的值为 null； 
+		*其子节点可能是一个 DocumentType（最多一个）、 Element（最多一个）、 ProcessingInstruction或 Comment。
+		 */
+		
+		(function(){
+			//1. 文档的子节点
+			//虽然 DOM 标准规定 Document 节点的子节点可以是 DocumentType、 Element、 ProcessingIn-struction 或 Comment，但还有两个内置的访问其子节点的快捷方式。 
+			//第一个就是 documentElement属性，该属性始终指向 HTML 页面中的<html>元素。
+			//另一个就是通过 childNodes 列表访问文档元素，但通过 documentElement 属性则能更快捷、更直接地访问该元素
+			
+			var html = document.documentElement;	 	//取得对<html>的引用	
+			console.log(document.childNodes)	
+
+			//作为 HTMLDocument 的实例， document 对象还有一个 body 属性，直接指向<body>元素。因为开发人员经常要使用这个元素，所以 document.body 在 JavaScript 代码中出现的频率非常高
+			var body = document.body; //取得对<body>的引用
+
+			//所有浏览器都支持 document.documentElement 和 document.body 属性。
+			//Document 另一个可能的子节点是 DocumentType。通常将<!DOCTYPE>标签看成一个与文档其他部分不同的实体，可以通过 doctype 属性（在浏览器中是 document.doctype）来访问它的信息
+			var doctype = document.doctype; //取得对<!DOCTYPE>的引用
+		})();
+
+		(function(){
+			//2.文档信息
+			//作为 HTMLDocument 的一个实例， document 对象还有一些标准的 Document 对象所没有的属性。这些属性提供了 document 对象所表现的网页的一些信息
+			//1、title，包含着<title>元素中的文本——显示在浏览器窗口的标题栏或标签页上
+			var title = document.title;
+
+			/*3 个对网页请求有关的属性，它们是 URL、 domain 和 referrer
+			*URL 属性中包含页面完整的 URL（即地址栏中显示的 URL）， 
+			*domain 属性中只包含页面的域名，URL 与 domain 属性是相互关联的
+			*而 referrer属性中则保存着链接到当前页面的那个页面的 URL。在没有来源页面的情况下， referrer 属性中可能会包含空字符串。
+			*所有这些信息都存在于请求的 HTTP 头部，只不过是通过这些属性让我们能够在JavaScrip 中访问它们而已
+			*/
+		
+			//取得完整的 URL
+			var url = document.URL;
+
+			//取得域名
+			var domain = document.domain;
+
+			//取得来源页面的 URL
+			var referrer = document.referrer;
+
+			/*domain 是可以设置的。但由于安全方面的限制，也并非可以给 domain 设置任何值。 
+			*如果 URL 中包含一个子域名，例如 p2p.wrox.com，那么就只能将 domain 设置为"wrox.com"（ URL 中包含"www"，如 www.wrox.com 时，也是如此）。不能将这个属性设置为 URL 中不包含的域
+			*
+			* 浏览器对 domain 属性还有一个限制，即如果域名一开始是“松散的”（ loose），那么不能将它再设置为“紧绷的”（ tight）。
+			* 换句话说，在将 document.domain 设置为"wrox.com"之后，就不能再将其设置回"p2p.wrox.com"，否则将会导致错误
+			**/
+
+			//假设页面来自 p2p.wrox.com 域
+			function setDomain(){
+				document.domain = "wrox.com"; 		// 成功
+				document.domain = "nczonline.net"; 	// 出错！
+
+				document.domain = "wrox.com"; 		//松散的（成功）
+				document.domain = "p2p.wrox.com"; 	//紧绷的（出错！）
+			};
+
+			//当页面中包含来自其他子域的框架或内嵌框架时，能够设置 document.domain 就非常方便了。
+			//由于 跨 域 安 全 限 制 ， 来 自 不 同 子 域 的 页 面 无 法 通 过 JavaScript 通 信 。 
+			//而 通 过 将 每 个 页 面 的document.domain 设置为相同的值，这些页面就可以互相访问对方包含的 JavaScript 对象了。
+			//
+			//例如，假设有一个页面加载自 www.wrox.com，其中包含一个内嵌框架，框架内的页面加载自 p2p.wrox.com。
+			//由于 document.domain 字符串不一样，内外两个页面之间无法相互访问对方的 JavaScript 对象。
+			//但如果将这两个页面的 document.domain 值都设置为"wrox.com"，它们之间就可以通信了。
+
+		})();
+
+
+		console.log('☺☺☺※※※※※※※※※※※※※※※※※※※※※※※※※※※※※☺☺☺');
+		(function(){
+			//3、查找元素
+			/*
+			*document.getElementById('');
+			*接收一个参数：要取得的元素的 ID。
+			*如果找到相应的元素则返回该元素，如果不存在带有相应 ID 的元素，则返回 null。
+			*注意，这里的 ID 必须与页面中元素的 id特性（ attribute）严格匹配，包括大小写
+			*☺☺☺※※※如果页面中多个元素的 ID 值相同， getElementById()只返回文档中第一次出现的元素			
+			 */
+			
+			var box = document.getElementById('box');
+			//IE7 及较低版本还为此方法添加了一个有意思的“怪癖”： name 特性与给定 ID 匹配的表单元素（ <input>、<textarea>、 <button>及<select>）也会被该方法返回。
+			//如果有哪个表单元素的 name 特性等于指定的 ID，而且该元素在文档中位于带有给定 ID 的元素前面，那么 IE 就会返回那个表单元素
+			var a = `<input type="text" name="myElement" value="Text field">
+			<div id="myElement">A div</div>`;
+			//基于这段 HTML 代码，在 IE7 中调用 document.getElementById("myElement ")，结果会返回<input>元素；而在其他所有浏览器中，都会返回对<div>元素的引用。为了避免 IE 中存在的这个问题，最好的办法是不让表单字段的 name 特性与其他元素的 ID 相同
+			
+
+			/*
+			*document.getElementsByTagName()
+			*这个方法接受一个参数，即要取得元素的标签名，而返回的是包含零或多个元素的 NodeList
+			*在 HTML 文档中，这个方法会返回一个 HTMLCollection 对象，作为一个“动态”集合，该对象与 NodeList 非常类似
+			*
+			*HTMLCollection 对象还有一个方法，叫做 namedItem()，使用这个方法可以通过元素的 name特性取得集合中的项
+			*在提供按索引访问项的基础上， HTMLCollection 还支持按名称访问项，这就为我们取得实际想要的元素提供了便利。
+			*而且，对命名的项也可以使用方括号语法来访问
+			 */
+			var lis = document.getElementsByTagName('li');
+			console.log(lis.namedItem('firstLi'));		//<li name = 'firstLi'>1</li>
+			var li1 = lis['firstLi'];
+			console.log(li1);							//<li name = 'firstLi'>1</li>
+			//对 HTMLCollection 而言，我们可以向方括号中传入数值或字符串形式的索引值。在后台，对数值索引就会调用 item()，而对字符串索引就会调用 namedItem()
+			//lis[0] ==> lis.item(0);	lis['firstLi'] ==> lis.namedItem('firstLi')
+
+			//要想取得文档中的所有元素，可以向 getElementsByTagName()中传入"*"。在 JavaScript 及 CSS中，星号（ *）通常表示“全部”
+			var allElements = document.getElementsByTagName("*");
+
+			/*
+			*getElementsByName()
+			*这个方法会返回带有给定 name 特性的所有元素
+			 */
+			var radios = document.getElementsByName("color");
+			// console.log(radios);
+			/* for (i=0; i<radios.length; i++) {  
+        			if (radios[i].checked) {  
+            			alert(radios[i].value)  
+        			}  
+    			};*/
+    			function getCheckedRadio(radioName){
+    				var radios = document.getElementsByName(radioName);
+				console.log(radios);
+				 for (i=0; i<radios.length; i++) {  
+	        			if (radios[i].checked) {  
+	            			alert(radios[i].value)  ;
+	            			//$("input[name='color']:checked").val();
+	        			};  
+	    			};
+    			};
+    			getCheckedRadio("color");
+		}());
+
+
+		console.log('☺☺☺※※※※※※※※※※※※※※※※※※※※※※※※※※※※※☺☺☺');
+		(function(){
+			/*4、特殊集合
+			*document.anchors，包含文档中所有带 name 特性的<a>元素
+			*document.links，包含文档中所有带 href 特性的<a>元素
+			
+			*document.forms， 包含文档中所有的<form>元素， 与 document.getElementsByTagName("form")得到的结果相同
+			*document.images，包含文档中所有的<img>元素，与 document.getElementsByTagName("img")得到的结果相同
+			*
+			*document.applets，包含文档中所有的<applet>元素;(applet已不再推荐使用)
+			*/
+		})();
+
+
+		console.log('☺☺☺※※※※※※※※※※※※※※※※※※※※※※※※※※※※※☺☺☺');
+		(function(){
+			/*5、DOM 一致性检测
+			*由于 DOM 分为多个级别，也包含多个部分，因此检测浏览器实现了 DOM 的哪些部分就十分必要了。 
+			*document.implementation 属性就是为此提供相应信息和功能的对象，与浏览器对 DOM 的实现直接对应。
+			* 
+			*DOM1 级只为 document.implementation 规定了一个方法，即 hasFeature()。
+			*这个方法接受两个参数：要检测的 DOM 功能的名称及版本号。如果浏览器支持给定名称和版本的功能，则该方法返回 true，
+			*/
+			var hasXmlDom = document.implementation.hasFeature("XML", "1.0");
+
+
+			//6、文档写入
+			//有一个 document 对象的功能已经存在很多年了，那就是将输出流写入到网页中的能力
+			//write()、 writeln()、 open()和 close()
+			//write()和 writeln()方法都接受一个字符串参数，即要写入到输出流中的文本。 write()会原样写入，而 writeln()则会在字符串的末尾添加一个换行符（ \n）
+			`document.write("<strong>" + (new Date()).toString() + "</strong>");`;
+			// open()和 close()分别用于打开和关闭网页的输出流。
+			// 如果是在页面加载期间使用 write()或 writeln()方法，则不需要用到这两个方法
+			
+
+		})();
+	</script>
+</body>
+</html>

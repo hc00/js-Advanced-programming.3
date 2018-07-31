@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>recursion-递归</title>
+</head>
+<body>
+	<div class="box">
+		
+	</div>
+	<script>
+		{
+			//函数声明 默认会提升
+			function a(x,y){
+				return x+y;
+			};console.log(a.name)
+
+			//函数表达式
+			var a1 = function(x,y){
+				return x+y;
+			};
+		};
+		{
+			//递归函数是在一个函数通过名字调用自身的情况下构成的
+			function factorial(num){
+				if (num <= 1){
+					return 1;
+				} else {
+					return num * factorial(num-1);					
+				}
+			};
+			/*var anotherFactorial = factorial;	
+			factorial = null;	
+			alert(anotherFactorial(4));		//此时会报错
+			*/				
+
+			function factorial1(num){
+				if (num <= 1){
+					return 1;
+				} else {					
+					return num * arguments.callee(num-1);
+					//arguments.callee 是一个指向正在执行的函数的指针
+				}
+			};
+
+			var anotherFactorial = factorial1;
+			factorial = null;	console.log(anotherFactorial)
+			alert(anotherFactorial(4));		//24
+
+			//在严格模式下，不能通过脚本访问 arguments.callee;使用命名函数表达式
+			var factoria2 = (function f(num){
+				if (num <= 1){
+					return 1;
+				} else {
+					return num * f(num-1);
+				}
+			});
+			var addS = (function f(num){
+				if (num <= 0) {
+					return 0;
+				}else {
+					return num + f(num -1 )
+				}
+			})
+		}
+	</script>
+</body>
+</html>

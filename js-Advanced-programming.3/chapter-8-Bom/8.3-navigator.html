@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>navigator</title>
+	<style>
+		.table{
+			border-collapse: collapse;
+			margin: 15px auto ;
+			text-align: center;
+		}
+	</style>
+</head>
+<body>
+	<div>		
+		<table border="1" class="table" >
+			<thead>
+				<tr>
+					<th>属性或方法</th>
+					<th>说明</th>
+					<th>IE</th>
+					<th>Firefox</th>
+					<th>Safari/Chrome</th>
+					<th>Opera</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>appCodeName</td>
+					<td>浏览器的名称。通常都是Mozilla，即使在非Mozilla浏览器中也是如此</td>
+					<td>3.0+</td>
+					<td>1.0+</td>
+					<td>1.0+</td>
+					<td>7.0+</td>
+				</tr>
+				<tr>
+					<td>appMinorVersion</td>
+					<td>次版本信息</td>
+					<td>4.0+</td>
+					<td>－</td>
+					<td>－</td>
+					<td>9.5+</td>
+				</tr>
+				<tr>
+					<td>appName</td>
+					<td>完整的浏览器名称</td>
+					<td>3.0+</td>
+					<td>1.0+</td>
+					<td>1.0+</td>
+					<td>7.0+</td>
+				</tr>
+				<tr>
+					<td>appVersion</td>
+					<td>浏览器的版本。一般不与实际的浏览器版本对应</td>
+					<td>3.0+</td>
+					<td>1.0+</td>
+					<td>1.0+</td>
+					<td>7.0+</td>
+				</tr>
+				<tr>
+					<td>buildID</td>
+					<td>浏览器编译版本</td>
+					<td>－</td>
+					<td>2.0+</td>
+					<td>－</td>
+					<td>－</td>
+				</tr>
+				<tr>
+					<td>cookieEnabled</td>
+					<td>表示cookie是否启用</td>
+					<td>4.0+</td>
+					<td>1.0+</td>
+					<td>1.0+</td>
+					<td>7.0+</td>
+				</tr>
+				<tr>
+					<td>cpuClass</td>
+					<td>客户端计算机中使用的CPU类型（ x86、68K、 Alpha、 PPC或Other）</td>
+					<td>4.0+</td>
+					<td>－</td>
+					<td>－</td>
+					<td>－</td>
+				</tr>
+				<tr>
+					<td>javaEnabled()</td>
+					<td>表示当前浏览器中是否启用了Java</td>
+					<td>4.0+</td>
+					<td>1.0+</td>
+					<td>1.0+</td>
+					<td>7.0+</td>
+				</tr>
+				<tr>
+					<td>language</td>
+					<td>浏览器的主语言</td>
+					<td>－</td>
+					<td>1.0+</td>
+					<td>1.0+</td>
+					<td>7.0+</td>
+				</tr>
+				<tr>
+					<td>mimeTypes</td>
+					<td>在浏览器中注册的MIME类型数组</td>
+					<td>4.0+</td>
+					<td>1.0+</td>
+					<td>1.0+</td>
+					<td>7.0+</td>
+				</tr>
+				<tr>
+					<td>onLine</td>
+					<td>表示浏览器是否连接到了因特网</td>
+					<td>4.0+</td>
+					<td>1.0+</td>
+					<td>－</td>
+					<td>9.5+</td>
+				</tr>
+				<tr>
+					<td>opsProfile</td>
+					<td>似乎早就不用了。查不到相关文档</td>
+					<td>4.0+</td>
+					<td>－</td>
+					<td>－</td>
+					<td>－</td>
+				</tr>
+				<tr>
+					<td>oscpu</td>
+					<td>客户端计算机的操作系统或使用的CPU</td>
+					<td>－</td>
+					<td>1.0+</td>
+					<td>－</td>
+					<td>－</td>
+				</tr>
+				<tr>
+					<td>platform</td>
+					<td>浏览器所在的系统平台</td>
+					<td>4.0+</td>
+					<td>1.0+</td>
+					<td>1.0+</td>
+					<td>7.0+</td>
+				</tr>
+				<tr>
+					<td>plugins</td>
+					<td>浏览器中安装的插件信息的数组</td>
+					<td>4.0+</td>
+					<td>1.0+</td>
+					<td>1.0+</td>
+					<td>7.0+</td>
+				</tr>
+				<tr>
+					<td>preference()</td>
+					<td>设置用户的首选项</td>
+					<td>－</td>
+					<td>1.5+</td>
+					<td>－</td>
+					<td>－</td>
+				</tr>
+				<tr>
+					<td>product</td>
+					<td>产品名称（如 Gecko）</td>
+					<td>－</td>
+					<td>1.0+</td>
+					<td>1.0+</td>
+					<td>－</td>
+				</tr>
+				<tr>
+					<td>productSub</td>
+					<td>关于产品的次要信息（如Gecko的版本）</td>
+					<td>－</td>
+					<td>1.0+</td>
+					<td>1.0+</td>
+					<td>－</td>
+				</tr>
+				<tr>
+					<td>registerContentHandler()</td>
+					<td>针对特定的MIME类型将一个站点注册为处理程序</td>
+					<td>－</td>
+					<td>2.0+</td>
+					<td>－</td>
+					<td>－</td>
+				</tr>
+				<tr>
+					<td>registerProtocolHandler()</td>
+					<td>针对特定的协议将一个站点注册为处理程序</td>
+					<td>－</td>
+					<td>2.0+</td>
+					<td>－</td>
+					<td>－</td>
+				</tr>
+				<tr>
+					<td>securityPolicy</td>
+					<td>已经废弃。安全策略的名称。为了与Netscape Navigator 4向后兼容而保留下来</td>
+					<td>－</td>
+					<td>1.0+</td>
+					<td>－</td>
+					<td>－</td>
+				</tr>
+				<tr>
+					<td>systemLanguage</td>
+					<td>操作系统的语言</td>
+					<td>4.0+</td>
+					<td>－</td>
+					<td>－</td>
+					<td>－</td>
+				</tr>
+				<tr>
+					<td>taintEnabled()</td>
+					<td>已经废弃。表示是否允许变量被修改（ taint）。为了与Netscape Navigator 3向后兼容而保留下来</td>
+					<td>4.0+</td>
+					<td>1.0+</td>
+					<td>－</td>
+					<td>7.0+</td>
+				</tr>
+				<tr>
+					<td>userAgent</td>
+					<td>浏览器的用户代理字符串</td>
+					<td>3.0+</td>
+					<td>1.0+</td>
+					<td>1.0+</td>
+					<td>7.0+</td>
+				</tr>
+				<tr>
+					<td>userLanguage</td>
+					<td>操作系统的默认语言</td>
+					<td>4.0+</td>
+					<td>－</td>
+					<td>－</td>
+					<td>7.0+</td>
+				</tr>
+				<tr>
+					<td>userProfile</td>
+					<td>借以访问用户个人信息的对象</td>
+					<td>4.0+</td>
+					<td>－</td>
+					<td>－</td>
+					<td>－</td>
+				</tr>
+				<tr>
+					<td>vendor</td>
+					<td>浏览器的品牌</td>
+					<td>－</td>
+					<td>1.0+</td>
+					<td>1.0+</td>
+					<td>－</td>
+				</tr>
+				<tr>
+					<td>vendorSub</td>
+					<td>有关供应商的次要信息</td>
+					<td>－</td>
+					<td>1.0+</td>
+					<td>1.0+</td>
+					<td>－</td>
+				</tr>
+			</tbody>			
+		</table>
+		
+	</div>
+	<script type="text/javascript">
+		
+		/*8.3		navigator*/
+		{	
+			/*8.3.1		检测插件
+			*检测浏览器中是否安装了特定的插件是一种最常见的检测例程。对于非 IE 浏览器，可以使用plugins 数组来达到这个目的。该数组中的每一项都包含下列属性。
+ 			name：插件的名字。
+ 			description：插件的描述。
+ 			filename：插件的文件名。
+ 			length：插件所处理的 MIME 类型数量。
+			一般来说， name 属性中会包含检测插件必需的所有信息，但有时候也不完全如此。在检测插件时，需要像下面这样循环迭代每个插件并将插件的 name 与给定的名字进行比较
+			*/
+			//检测插件（在 IE 中无效）
+			function hasPlugin(name){
+				name = name.toLowerCase();
+				for (var i=0; i < navigator.plugins.length; i++){
+					if (navigator. plugins [i].name.toLowerCase().indexOf(name) > -1){
+						return true;
+					}
+				};
+				return false;
+			};
+
+			//检测 IE 中的插件
+			function hasIEPlugin(name){
+				try {
+					new ActiveXObject(name);
+					return true;
+				} catch (ex){
+					return false;
+				}
+			};
+			//检测 Flash
+			alert(hasIEPlugin("ShockwaveFlash.ShockwaveFlash"));
+			//检测 QuickTime
+			alert(hasIEPlugin("QuickTime.QuickTime"));
+
+			//检测 Flash
+			alert(hasPlugin("Flash"));
+			//检测 QuickTime
+			alert(hasPlugin("QuickTime"));
+
+			/*鉴于检测这两种插件的方法差别太大，因此典型的做法是针对每个插件分别创建检测函数，而不是使用前面介绍的通用检测方法*/
+			//检测所有浏览器中的 Flash
+			function hasFlash(){
+				var result = hasPlugin("Flash");
+				if (!result){
+					result = hasIEPlugin("ShockwaveFlash.ShockwaveFlash");
+				};
+				return result;
+			};
+						
+		}
+	</script>
+</body>
+</html>
