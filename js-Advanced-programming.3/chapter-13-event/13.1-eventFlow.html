@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>事件流</title>
+	<style>
+		.box{
+			width: 100px;
+			height: 100px;
+			background: #12aaff
+		}
+		.span1{
+			background: green;
+		}
+	</style>
+</head>
+<body>
+	<div class="wrapper">
+		<div id="box" class="box">
+			<span class="span1"> 123span</span>
+		</div>
+	</div>
+	<script type="text/javascript">
+		/*
+		*事件流描述的是从页面中接收事件的顺序。但有意思的是， IE 和 Netscape 开发团队居然提出了差不多是完全相反的事件流的概念。 IE 的事件流是事件冒泡流，而 Netscape Communicator 的事件流是事件捕获流。
+		 */
+		
+		function stopPropagation(e){
+			if (e && e.stopPropagation) {
+            		//因此它支持W3C的stopPropagation()方法
+            		e.stopPropagation();
+        		} else {
+            		//否则，我们需要使用IE的方式来取消事件冒泡 
+            		window.event.cancelBubble = true;
+            		return false;
+        		}
+		};
+		function preventDefault(e){
+			//如果提供了事件对象，则这是一个非IE浏览器
+        		if (e && e.preventDefault) {
+            		//阻止默认浏览器动作(W3C) 
+            		e.preventDefault();
+        		}else {
+            		//IE中阻止函数器默认动作的方式 
+            		window.event.returnValue = false;
+            		return false;
+        		};
+		};
+		var box = document.getElementById('box');
+		var span = document.querySelector('.span1');
+		/*box.onclick = function(){
+			console.log('box click')
+		};
+		span.onclick = function(){
+			console.log('span click')
+		};*/
+
+		//13.1.1	冒泡
+		//IE 的事件流叫做事件冒泡（event bubbling），即事件开始时由最具体的元素（文档中嵌套层次最深的那个节点）接收，然后逐级向上传播到较为不具体的节点（文档）
+		box.onclick = function(){
+			console.log('box click')
+		};
+		span.onclick = function(evevt){
+			var e = event || window.event;
+			// stopPropagation(e);
+			console.log('span click')
+		};
+		
+
+		/*13.1.2 事件捕获
+			*Netscape Communicator 团队提出的另一种事件流叫做事件捕获（event capturing）。
+			*事件捕获的思想是不太具体的节点应该更早接收到事件，而最具体的节点应该最后接收到事件。事件捕获的用意在于在事件到达预定目标之前捕获它
+			*在事件捕获过程中， document 对象首先接收到 click 事件，然后事件沿 DOM 树依次向下，一直传播到事件的实际目标
+		*/
+	
+		/*13.1.3 DOM事件流
+			*“DOM2级事件”规定的事件流包括三个阶段：事件捕获阶段、处于目标阶段和事件冒泡阶段。
+			*首先发生的是事件捕获，为截获事件提供了机会。然后是实际的目标接收到事件。最后一个阶段是冒泡阶段，可以在这个阶段对事件做出响应
+		*/
+	
+		`		捕	❶	Document 		❼					冒
+				获	╰❷	Element html 		❻╯			泡
+				阶		╰❸	Element body 	❺╯		阶
+				段			╰		Element div 		❹╯	段
+		`;
+		//在 DOM 事件流中，实际的目标（<div>元素）在捕获阶段不会接收到事件。
+		//这意味着在捕获阶段，事件从 document 到<html>再到<body>后就停止了。下一个阶段是“处于目标”阶段，于是事件在<div>上发生，并在事件处理（后面将会讨论这个概念）中被看成冒泡阶段的一部分。然后，冒泡阶段发生，事件又传播回文档
+
+	
+	</script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>范围</title>
+</head>
+<body>
+	<div class="wrapper">
+		<div id="box" class="box">
+			<span id='span1'><b>b tag</b>span tag</span>
+			<p id="p1"><b>Hello</b> world!</p>
+		</div>
+	</div>
+	<script type="text/javascript">
+		/*12.4 范围*/
+		{
+			/*12.4.1 Dom中的范围
+				*DOM2 级在 Document 类型中定义了 createRange()方法。在兼容 DOM 的浏览器中，这个方法属于 document 对象。
+				*使用 hasFeature()或者直接检测该方法，都可以确定浏览器是否支持范围
+				*
+				*每个范围由一个 Range 类型的实例表示，这个实例拥有很多属性和方法。下列属性提供了当前范围在文档中的位置信息。
+ 					*startContainer：包含范围起点的节点（即选区中第一个节点的父节点）。 
+					*startOffset：范围在 startContainer 中起点的偏移量。
+						如果 startContainer 是文本节点、注释节点或 CDATA 节点，那么 startOffset 就是范围起点之前跳过的字符数量。否则，startOffset 就是范围中第一个子节点的索引。 
+					*endContainer：包含范围终点的节点（即选区中最后一个节点的父节点）。 
+					*endOffset：范围在 endContainer 中终点的偏移量（与 startOffset 遵循相同的取值规则）。 
+					*commonAncestorContainer： startContainer 和 endContainer 共同的祖先节点在文档树中位置最深的那个。
+					*
+					*在把范围放到文档中特定的位置时，这些属性都会被赋值
+			*/
+		
+			var supportsRange = document.implementation.hasFeature("Range", "2.0");
+			var alsoSupportsRange = (typeof document.createRange == "function");
+
+			//如果浏览器支持范围，那么就可以使用 createRange()来创建 DOM 范围，如下所示：
+			var range = document.createRange();
+
+
+			//1. 用 DOM 范围实现简单选择
+			//要使用范围来选择文档中的一部分，最简的方式就是使用 selectNode()或 selectNodeContents()。这两个方法都接受一个参数，即一个 DOM 节点，然后使用该节点中的信息来填充范围
+			//selectNode()方法选择整个节点，包括其子节点；而 selectNodeContents()方法则只选择节点的子节点
+			var range1 = document.createRange();
+			range2 = document.createRange();
+			p1 = document.getElementById("p1");
+			var range11 = range1.selectNode(p1);
+			var range21 = range2.selectNodeContents(p1);
+		}
+	</script>
+</body>
+</html>

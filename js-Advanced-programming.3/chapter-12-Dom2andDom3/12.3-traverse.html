@@ -29,7 +29,7 @@
 		//如前所述， DOM 遍历是深度优先的 DOM 结构遍历，也就是说，移动的方向至少有两个（取决于使用的遍历类型）。遍历以给定节点为根，不可能向上超出 DOM 树的根节点
 		//任何节点都可以作为遍历的根节点
 		
-		{
+		{	
 			/*12.3.1 NodeIterator
 				*NodeIterator 类型是两者中比较简单的一个，可以使用 document.createNodeIterator()方法创建它的新实例;接受4个参数	
 				*
@@ -84,6 +84,52 @@
 			};
 
 			//由于 nextNode()和 previousNode()方法都基于 NodeIterator 在 DOM 结构中的内部指针工作，所以 DOM 结构的变化会反映在遍历的结果中
+		};
+
+		console.log('ヾ(◍°∇°◍)ﾉﾞ----------------------------------------------------------------ヾ(๑╹◡╹)ﾉ"');
+		{
+			/*12.3.2 TreeWalker
+				*TreeWalker 是 NodeIterator 的一个更高级的版本。				
+				*除了包括 nextNode()和 previousNode()在内的相同的功能之外，这个类型还提供了下列用于在不同方向上遍历 DOM 结构的方法
+					*parentNode()：遍历到当前节点的父节点； 
+					*firstChild()：遍历到当前节点的第一个子节点； 
+					*lastChild()：遍历到当前节点的最后一个子节点； 
+					*nextSibling()：遍历到当前节点的下一个同辈节点； 
+					*previousSibling()：遍历到当前节点的上一个同辈节点
+				
+				*创建 TreeWalker 对象要使用 document.createTreeWalker()方法
+				*接受的 4 个参数与 document.createNodeIterator()方法相同：
+				*作为遍历起点的根节点、要显示的节点类型、过滤器和一个表示是否扩展实体引用的布尔值
+			*/
+			console.log(div,filter)
+			var walker= document.createTreeWalker(div, NodeFilter.SHOW_ELEMENT,filter, false);
+			iterator = document.createNodeIterator(div, NodeFilter.SHOW_ELEMENT,filter, false);
+			var node2 = iterator.nextNode();
+			while (node2 !== null) {
+				alert(node2.tagName); //输出标签名
+				node2 = iterator.nextNode();
+			};
+
+			//filter 可以返回的值有所不同。除了 NodeFilter.FILTER_ACCEPT 和 NodeFilter.FILTER_SKIP 之外，还可以使用 NodeFilter.FILTER_REJECT
+			//在使用 NodeIterator 对象时，NodeFilter.FILTER_SKIP 与 NodeFilter.FILTER_REJECT 的作用相同：跳过指定的节点。
+			//但在使用 TreeWalker 对象时， NodeFilter.FILTER_SKIP 会跳过相应节点继续前进到子树中的下一个节点，而 NodeFilter.FILTER_REJECT 则会跳过相应节点及该节点的整个子树。
+			//例如，将前面例子中的NodeFilter.FILTER_SKIP 修改成 NodeFilter.FILTER_REJECT，结果就是不会访问任何节点。这是因为第一个返回的节点是<div>，它的标签名不是"li"，于是就会返回 NodeFilter.FILTER_REJECT，这意味着遍历会跳过整个子树。在这个例子中， <div>元素是遍历的根节点，于是结果就会停止遍历
+			
+			//TreeWalker 真正强大的地方在于能够在 DOM 结构中沿任何方向移动。使用 TreeWalker遍历 DOM 树，即使不定义过滤器，也可以取得所有<li>元素
+			var walker1 = document.createTreeWalker(div, NodeFilter.SHOW_ELEMENT, null, false);
+			walker1.firstChild(); //转到<p>
+			walker1.nextSibling(); //转到<ul>
+			var node3 = walker1.firstChild(); //转到第一个<li>
+			while (node3 !== null) {
+				console.log(node3.tagName);
+				node3 = walker1.nextSibling();
+			};
+
+			//TreeWalker 类型还有一个属性，名叫 currentNode，表示任何遍历方法在上一次遍历中返回的节点。通过设置这个属性也可以修改遍历继续进行的起点
+			
+			var node4 = walker.nextNode();
+			alert(node4 === walker.currentNode); //true
+			walker.currentNode = document.body; //修改起点
 		};
 	</script>
 </body>

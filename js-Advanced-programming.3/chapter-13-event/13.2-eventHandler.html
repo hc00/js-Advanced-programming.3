@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>事件处理程序</title>
+	<style>
+		.box{
+			width: 100px;
+			height: 100px;
+			background: #12aaff
+		}
+		.span1{
+			background: green;
+		}
+	</style>
+</head>
+<body>
+	<div class="wrapper">
+		<div id="box" class="box">
+			<span>span</span>
+
+		</div>
+		<input type="button" value="Click Me" onclick="alert(&quot;Clicked&quot;)" />
+		<input type="button" value="Click Me" onclick="sayMessage()" />
+		<input type="button" value="Click Me ==> alert(value)" onclick="alert(value)">
+	</div>		
+	<script type="text/javascript">
+		/*事件就是用户或浏览器自身执行的某种动作。诸如 click、 load 和 mouseover，都是事件的名字。
+			*而响应某个事件的函数就叫做事件处理程序（或事件侦听器）。
+			*事件处理程序的名字以"on"开头，因此click 事件的事件处理程序就是 onclick， load 事件的事件处理程序就是 onload。
+			*为事件指定处理程序的方式有好几种*/
+		
+		{
+			//13.2.1 HTML事件处理程序
+			//某个元素支持的每种事件，都可以使用一个与相应事件处理程序同名的 HTML 特性来指定。这个特性的值应该是能够执行的 JavaScript 代码
+			`<input type="button" value="Click Me" onclick="alert('Clicked')" />`;
+			function sayMessage(evt){
+				var e = evt || window.event;
+				alert('hello world!');
+				console.log(e);
+			};
+
+			//如果当前元素是一个表单输入元素，则作用域中还会包含访问表单元素（父元素）的入口，这个函数就变成了如下所示：
+			function a (){
+				with(document){
+					with(this.form){
+						with(this){
+							//元素属性值
+						}
+					}
+				}
+			};
+			//实际上，这样扩展作用域的方式，无非就是想让事件处理程序无需引用表单元素就能访问其他表单字段
+			`<form method="post">
+				<input type="text" name="username" value="">
+				<input type="button" value="Echo Username" onclick="alert(username.value)">
+			</form>`;
+
+			//●●●不过，在 HTML 中指定事件处理程序有两个缺点。
+			//首先，存在一个时差问题。因为用户可能会在HTML 元素一出现在页面上就触发相应的事件，但当时的事件处理程序有可能尚不具备执行条件
+				//为此，很多 HTML 事件处理程序都会被封装在一个 try-catch 块中，以便错误不会浮出水面
+				`<input type="button" value="Click Me" onclick="try{showMessage();}catch(ex){}">`;
+			//另一个缺点是，这样扩展事件处理程序的作用域链在不同浏览器中会导致不同结果。不同 JavaScript引擎遵循的标识符解析规则略有差异，很可能会在访问非限定对象成员时出错
+			//通过 HTML 指定事件处理程序的最后一个缺点是 HTML 与 JavaScript 代码紧密耦合。如果要更换事件处理程序，就要改动两个地方： HTML 代码和 JavaScript 代码
+		};
+
+		{
+			/*13.2.2 DOM0 级事件处理程序
+				*通过 JavaScript 指定事件处理程序的传统方式，就是将一个函数赋值给一个事件处理程序属性。
+				*这种为事件处理程序赋值的方法是在第四代 Web 浏览器中出现的，而且至今仍然为所有现代浏览器所支持。
+				*原因一是简单，二是具有跨浏览器的优势。要使用 JavaScript 指定事件处理程序，首先必须取得一个要操作的对象的引用
+			*/
+		
+			//每个元素（包括 window 和 document）都有自己的事件处理程序属性，这些属性通常全部小写，例如 onclick。将这种属性的值设置为一个函数，就可以指定事件处理程序
+			var box = document.getElementById('box');
+			`form.elements;
+			form.userName;`;			//<input type='text'  name='userName'/>
+			box.onclick = function(){
+				alert('click by box');
+				console.log(this);
+			};
+			//以这种方式添加的事件处理程序会在事件流的冒泡阶段被处理。
+			//也可以删除通过 DOM0 级方法指定的事件处理程序，只要像下面这样将事件处理程序属性的值设置为 null 即可
+			box.onclick = null;
+		};
+
+
+		{
+			/*13.2.3 DOM2 级事件处理程序
+				*“DOM2 级事件” 定义了两个方法，用于处理指定和删除事件处理程序的操作： addEventListener()和 removeEventListener()。
+				*所有 DOM 节点中都包含这两个方法，并且它们都接受 3 个参数：要处理的事件名、作为事件处理程序的函数和一个布尔值。
+				*最后这个布尔值参数如果是 true，表示在捕获阶段调用事件处理程序；如果是 false，表示在冒泡阶段调用事件处理程序
+			*/
+		};
+
+	</script>
+</body>
+</html>
