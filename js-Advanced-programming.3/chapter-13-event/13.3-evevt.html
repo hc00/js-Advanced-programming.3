@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <title>事件对象</title>
+</head>
+<body>
+ <div class="box">
+  <div class="btn">
+   <button id="myBtn">myBtn</button>
+   <button id="myBtn1">myBtn1</button>
+   <a href="https://vuejs.org" id="myLink">myLink</a>
+  </div>
+  <div>
+   <h3>event 对象包含与创建它的特定事件有关的属性和方法。触发的事件类型不一样，可用的属性和方法也不一样。不过，所有事件都会有下表列出的成员</h3>
+   <pre>
+属性/方法&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 类 型          读/写       说 明
+bubbles&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Boolean        只读        表明事件是否冒泡
+cancelable&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Boolean        只读        表明是否可以取消事件的默认行为
+currentTarget&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Element        只读        其事件处理程序当前正在处理事件的那个元素
+defaultPrevented&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Boolean        只读        为 true 表 示 已 经 调 用 了 preventDefault()（DOM3级事件中新增）
+detail&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Integer        只读        与事件相关的细节信息
+eventPhase&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Integer        只读        调用事件处理程序的阶段： 1表示捕获阶段， 2表示“处于目标”， 3表示冒泡阶段
+preventDefault()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Function       只读        取 消 事 件 的 默 认 行 为 。 如 果 cancelable是true，则可以使用这个方法
+stopImmediatePropagation()&nbsp;&nbsp;Function       只读        取消事件的进一步捕获或冒泡，同时阻止任何事件处理程序被调用（DOM3级事件中新增）
+stopPropagation()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Function       只读        取消事件的进一步捕获或冒泡。如果bubbles为true，则可以使用这个方法
+target                        Element        只读        事件的目标
+trusted                       Boolean        只读        为true表示事件是浏览器生成的。为false表示 事 件是 由 开 发 人 员 通 过 JavaScript 创 建 的（DOM3级事件中新增）
+type                          String         只读        被触发的事件的类型
+view                          AbstractView   只读        与事件关联的抽象视图。等同于发生事件的window对象
+   </pre>
+  </div>
+ </div>
+
+ <script>
+  
+  {
+   /*
+   *在触发 DOM 上的某个事件时，会产生一个事件对象 event，这个对象中包含着所有与事件有关的信息。
+   *包括导致事件的元素、事件的类型以及其他与特定事件相关的信息。
+   *例如，鼠标操作导致的事件对象中，会包含鼠标位置的信息，而键盘操作导致的事件对象中，会包含与按下的键有关的信息。
+   *所有浏览器都支持 event 对象，但支持方式不同
+    */
+  };
+  { 
+   //13.3.1 Dom中的事件对象
+   //兼容 DOM 的浏览器会将一个 event 对象传入到事件处理程序中。无论指定事件处理程序时使用什么方法（DOM0 级或 DOM2 级），都会传入 event 对象
+   //event 对象包含与创建它的特定事件有关的属性和方法。触发的事件类型不一样，可用的属性和方法也不一样
+   var btn = document.getElementById("myBtn");
+   btn.onclick = function(event){
+    alert(event.type); //"click"
+    console.log(event)
+   };
+   btn.addEventListener("click", function(event){  console.log(event)
+    alert(event.type); //"click"
+   }, false);
+          /*在事件处理程序内部，对象 this 始终等于 currentTarget 的值，而 target 则只包含事件的实际目标。
+          如果直接将事件处理程序指定给了目标元素，则 this、 currentTarget 和 target 包含相同的值*/
+          btn.onclick = function(event){
+                alert(event.currentTarget === this); //true
+                alert(event.target === this); //true
+                console.log(event.currentTarget,this)
+          }; 
+
+          /*如果事件处理程序存在于按钮的父节点中（例如 document.body），那么这些值是不相同的*/
+
+          document.body.onclick = function(event){
+               alert(event.currentTarget === document.body); //true
+               alert(this === document.body); //true
+               alert(event.target === document.getElementById("myBtn")); //true
+          };
+
+
+
+          /*要阻止特定事件的默认行为，可以使用 preventDefault()方法。
+          例如，链接的默认行为就是在被单击时会导航到其 href 特性指定的 URL。如果你想阻止链接导航这一默认行为，那么通过链接的onclick 事件处理程序可以取消它
+          *只有 cancelable 属性设置为 true 的事件，才可以使用 preventDefault()来取消其默认行为。
+          *另外， stopPropagation()方法用于立即停止事件在 DOM 层次中的传播，即取消进一步的事件捕获或冒泡
+          */
+
+          var link = document.getElementById("myLink");
+          link.onclick = function(event){
+                event.preventDefault();
+                event.stopPropagation();
+                var e = event || window.event;
+                var target = e.target || e.srcElement;
+                console.log(target)
+          };
+  
+           /*事件对象的 eventPhase 属性，可以用来确定事件当前正位于事件流的哪个阶段。
+           *如果是在捕获阶段调用的事件处理程序，那么 eventPhase 等于 1；
+           *如果事件处理程序处于目标对象上，则 eventPhase 等于 2；
+           *如果是在冒泡阶段调用的事件处理程序， eventPhase 等于 3。
+           *这里要注意的是，尽管“处于目标”发生在冒泡阶段，但 eventPhase 仍然一直等于 2*/
+
+          let btn1 = document.getElementById("myBtn1");
+          let box = document.querySelector('.btn'); console.log(box)
+          btn1.onclick = function(event){
+              alert(event.eventPhase); //2
+          };
+         box.addEventListener("click", function(event){  console.log('.btn   捕获')
+             alert(event.eventPhase); //1
+          }, true);
+         box.onclick = function(event){
+             alert(event.eventPhase); //3
+          };
+     }
+
+     ;{
+        /*13.3.2 IE中的事件对象*/
+          //与访问 DOM 中的 event 对象不同，要访问 IE 中的 event 对象有几种不同的方式，取决于指定事件处理程序的方法。在使用 DOM0 级方法添加事件处理程序时， event 对象作为 window 对象的一个属性存在
+          `var btn = document.getElementById("myBtn");
+            btn.onclick = function(){
+                 var event = window.event;
+                 alert(event.type); //"click"
+            };`;
+
+           //如果事件处理程序是使用 attachEvent()添加的，那么就会有一个 event 对象作为参数被传入事件处理程序函数中
+           `var btn = document.getElementById("myBtn");
+                 btn.attachEvent("onclick", function(event){
+                 alert(event.type); //"click"
+            });`;
+
+            //因为事件处理程序的作用域是根据指定它的方式来确定的，所以不能认为 this 会始终等于事件目标。故而，最好还是使用 event.srcElement 比较保险
+            `var e = event || window.event;
+             var target = e.target || e.srcElement;`;
+
+     }
+
+
+     //阻止冒泡
+ function stopPropagation(e){
+   if (e && e.stopPropagation) {
+              //因此它支持W3C的stopPropagation()方法
+              e.stopPropagation();
+          } else {
+              //否则，我们需要使用IE的方式来取消事件冒泡 
+              window.event.cancelBubble = true;
+              return false;
+          }
+  };
+
+  //阻止默认行为
+  function preventDefault(e){
+   //如果提供了事件对象，则这是一个非IE浏览器
+          if (e && e.preventDefault) {
+              //阻止默认浏览器动作(W3C) 
+              e.preventDefault();
+          }else {
+              //IE中阻止函数器默认动作的方式 
+              window.event.returnValue = false;
+              return false;
+          };
+  };
+ </script>
+</body>
+</html>

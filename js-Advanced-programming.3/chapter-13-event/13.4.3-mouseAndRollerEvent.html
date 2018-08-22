@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>鼠标滚轮事件</title>
+	<style>
+		.parent{
+			width: 160px;
+			height: 160px;
+			background: #47d80d;
+			position: relative;
+		}
+		.son{
+			width: 40px;
+			height: 40px;
+			/* margin: 0 auto; */
+			background: #123fac;
+			position: absolute;
+			top: -20px;
+			left: 60px;
+		}
+		#myDiv2{
+			margin-top: 600px;
+		}
+	</style>
+</head>
+<body>
+	<div class="bocx">
+		<h3>13.4.3 鼠标与滚轮事件</h3>
+		<div class="parent">
+			<div class="son"></div>
+		</div>
+		<div id="myDiv">mydiv</div>
+		<div id="myDiv2">mydiv2</div>
+	</div>
+	<script src='EventUtil.js'></script>
+	<script>
+		{
+			`13.4.3 鼠标与滚轮事件
+				*鼠标事件是 Web 开发中最常用的一类事件，毕竟鼠标还是最主要的定位设备。 DOM3 级事件中定义了 9 个鼠标事件，简介如下
+					*click：在用户单击主鼠标按钮（一般是左边的按钮）或者按下回车键时触发。这一点对确保易访问性很重要，意味着 onclick 事件处理程序既可以通过键盘也可以通过鼠标执行。
+					* 
+					*dblclick：在用户双击主鼠标按钮（一般是左边的按钮）时触发。从技术上说，这个事件并不是 DOM2 级事件规范中规定的，但鉴于它得到了广泛支持，所以 DOM3 级事件将其纳入了标准。
+					* 
+					*mousedown：在用户按下了任意鼠标按钮时触发。不能通过键盘触发这个事件。
+					* 
+					*mouseenter：在鼠标光标从元素外部首次移动到元素范围之内时触发。这个事件不冒泡，而且在光标移动到后代元素上不会触发。 DOM2 级事件并没有定义这个事件，但 DOM3 级事件将它纳入了规范。 IE、 Firefox 9+和 Opera 支持这个事件。 
+					*
+					*mouseleave：在位于元素上方的鼠标光标移动到元素范围之外时触发。这个事件不冒泡，而且在光标移动到后代元素上不会触发。 DOM2 级事件并没有定义这个事件，但 DOM3 级事件将它纳入了规范。 IE、 Firefox 9+和 Opera 支持这个事件。
+					* 
+					*mousemove：当鼠标指针在元素内部移动时重复地触发。不能通过键盘触发这个事件。
+					*
+					* mouseout：在鼠标指针位于一个元素上方，然后用户将其移入另一个元素时触发。又移入的另一个元素可能位于前一个元素的外部，也可能是这个元素的子元素。不能通过键盘触发这个事件。 
+					* 
+					* mouseover：在鼠标指针位于一个元素外部，然后用户将其首次移入另一个元素边界之内时触发。不能通过键盘触发这个事件。
+					*  					
+					* mouseup：在用户释放鼠标按钮时触发。不能通过键盘触发这个事件
+			`;
+			`	页面上的所有元素都支持鼠标事件。除了 mouseenter 和 mouseleave，所有鼠标事件都会冒泡，也可以被取消，而取消鼠标事件将会影响浏览器的默认行为。取消鼠标事件的默认行为还会影响其他事件，因为鼠标事件与其他事件是密不可分的关系`;
+
+			`	只有在同一个元素上相继触发 mousedown 和 mouseup 事件，才会触发 click 事件；如果mousedown 或 mouseup 中的一个被取消，就不会触发 click 事件。类似地，只有触发两次 click 事件，才会触发一次 dblclick 事件。如果有代码阻止了连续两次触发 click 事件（可能是直接取消 click事件，也可能通过取消 mousedown 或 mouseup 间接实现），那么就不会触发 dblclick 事件了。这 4个事件触发的顺序始终如下：
+				(1) mousedown
+				(2) mouseup
+				(3) click
+				(4) mousedown
+				(5) mouseup
+				(6) click
+				(7) dblclick
+				显然， click 和 dblclick 事件都会依赖于其他先行事件的触发；而 mousedown 和 mouseup 则
+				不受其他事件的影响`;
+			//使用以下代码可以检测浏览器是否支持以上 DOM2 级事件（除 dbclick、 mouseenter 和mouseleave 之外）：
+			var isSupported = document.implementation.hasFeature("MouseEvents", "2.0");
+			//要检测浏览器是否支持上面的所有事件，可以使用以下代码：
+			var isSupported1 = document.implementation.hasFeature("MouseEvent", "3.0");
+			//注意， DOM3 级事件的 feature 名是"MouseEvent"，而非"MouseEvents"。
+			`鼠标事件中还有一类滚轮事件。而说是一类事件，其实就是一个 mousewheel 事件。这个事件跟踪鼠标滚轮，类似于 Mac 的触控板`;
+
+			document.body.onmousedown = function(e){
+				console.log('mousedown');
+				document.body.onmousemove = function(e){
+					console.log('mousemove')
+				}
+			};
+			document.body.onmouseup = function(e){
+				document.body.onmousedown = null;
+				document.body.onmousemove = null;
+			};
+
+			let parent = document.querySelector('.parent');
+			parent.onmouseenter = function(e){
+				console.log('mouseenter')
+			};
+			parent.onmouseleave = function(e){
+				console.log('mouseleave')
+			};
+
+			/*parent.onmouseover = function(e){
+				console.log('mouseover')
+			};
+			parent.onmouseout = function(e){
+				console.log('mouseout')
+			};*/
+			
+		};
+
+		{
+			`1. 客户区鼠标位置
+				鼠标事件都是在浏览器视口中的特定位置上发生的。这个位置信息保存在事件对象的 clientX 和clientY 属性中。所有浏览器都支持这两个属性，它们的值表示事件发生时鼠标指针在视口中的水平和垂直坐标
+
+			`;
+			var div = document.getElementById("myDiv");
+			EventUtil.addHandler(div, "click", function(event){
+				event = EventUtil.getEvent(event);
+				console.log("Client coordinates: " + event.clientX + "," + event.clientY);
+			});
+		};
+
+		{
+			`2. 页面位置坐标
+				通过客户区坐标能够知道鼠标是在视口中什么位置发生的，而页面坐标通过事件对象的 pageX 和pageY 属性，能告诉你事件是在页面中的什么位置发生的。
+				换句话说，这两个属性表示鼠标光标在页面中的位置，因此坐标是从页面本身而非视口的左边和顶边计算的
+			`;
+			//在页面没有滚动的情况下， pageX 和 pageY 的值与 clientX 和 clientY 的值相等
+			var div2 = document.getElementById("myDiv2");
+			EventUtil.addHandler(div, "click", function(event){
+				event = EventUtil.getEvent(event);
+				console.log("Page coordinates: " + event.pageX + "," + event.pageY);
+			});
+			EventUtil.addHandler(div2, "click", function(event){
+				event = EventUtil.getEvent(event);
+				console.log("Page coordinates: " + event.pageX + "," + event.pageY);
+				console.log("Client coordinates: " + event.clientX + "," + event.clientY);
+				console.log("Scroll coordinates: " + (document.body.scrollLeft || document.documentElement.scrollLeft) + "," + (document.body.scrollTop ||document.documentElement.scrollTop));
+			});
+		};
+
+		{
+			`3. 屏幕坐标位置
+			鼠标事件发生时，不仅会有相对于浏览器窗口的位置，还有一个相对于整个电脑屏幕的位置。而通过 screenX 和 screenY 属性就可以确定鼠标事件发生时鼠标指针相对于整个屏幕的坐标信息。
+			`
+			//可以使用类似下面的代码取得鼠标事件的屏幕坐标：
+			// var div = document.getElementById("myDiv");
+			EventUtil.addHandler(div, "click", function(event){
+				event = EventUtil.getEvent(event);
+				alert("Screen coordinates: " + event.screenX + "," + event.screenY);
+			});
+		};
+
+		{
+			`4. 修改键
+				这些修改键就是 Shift、 Ctrl、 Alt 和 Meta（在 Windows 键盘中是 Windows 键，在苹果机中是 Cmd 键），它们经常被用来修改鼠标事件的行为。 
+				DOM 为此规定了 4 个属性，表示这些修改键的状态： shiftKey、 ctrlKey、 altKey 和 metaKey。
+				这些属性中包含的都是布尔值，如果相应的键被按下了，则值为 true，否则值为 false。
+				当某个鼠标事件发生时，通过检测这几个属性就可以确定用户是否同时按下了其中的键
+			`;
+			var son = document.querySelector('.son');
+			EventUtil.addHandler(son, "click", function(event){
+				event = EventUtil.getEvent(event);	
+				var keys = new Array();
+				if (event.shiftKey){
+					keys.push("shift");
+				}
+				if (event.ctrlKey){
+					keys.push("ctrl");
+				}
+				if (event.altKey){
+					keys.push("alt");
+				}
+				if (event.metaKey){
+					keys.push("meta");
+				}
+				alert("Keys: " + keys.join(","));
+				console.log("Keys: " + keys.join(","),event);
+			});
+		};
+
+		{
+			`5. 相关元素
+				在发生 mouseover 和 mouserout 事件时，还会涉及更多的元素。
+			这两个事件都会涉及把鼠标指针从一个元素的边界之内移动到另一个元素的边界之内。
+			对 mouseover 事件而言，事件的主目标是获得光标的元素，而相关元素就是那个失去光标的元素。
+			类似地，对 mouseout 事件而言，事件的主目标是失去光标的元素，而相关元素则是获得光标的元素
+			`;
+			//DOM 通过 event 对象的 relatedTarget 属性提供了相关元素的信息。这个属性只对于 mouseover和 mouseout 事件才包含值；对于其他事件，这个属性的值是 null
+			
+			// let div = document.querySelector('div');
+			// EventUtil.addHandler(div, "mouseout", function(event){
+			// 	event = EventUtil.getEvent(event);
+			// 	var target = EventUtil.getTarget(event);
+			// 	var relatedTarget = EventUtil.getRelatedTarget(event);
+			// 	alert("Moused out of " + target.tagName + " to " + relatedTarget.tagName);
+			// });
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>事件类型</title>
+	<style>
+		.img{
+			/* width:500px;margin: 0 auto; */
+			padding: 10px;
+			border: 5px pink solid;			
+		}
+		.img img{width:100%;float: left;}
+		.clearfix:after{
+			display: block;
+			content: '';
+			clear: both;
+		}
+		#myDiv{
+			width: 30%;
+			margin: 0 auto;
+			background:#808222;
+		}
+	</style>
+</head>
+<body>
+	<div class="box ">
+		<h3>13.4 事件类型</h3>
+		<div class="img "><img src="./eventType.jpg" alt=""></div>
+		<!-- <div class="img clearfix"><img src="./eventType.jpg" alt=""></div> -->
+		<p>123 <a href="https://www.baidu.com">baidu</a>	</p>
+		<div id='myDiv'>Web 浏览器中可能发生的事件有很多类型。如前所述，不同的事件类型具有不同的信息，而“DOM3级事件”规定了以下几类事件</div>
+	</div>
+	<script src='./EventUtil.js'></script>
+	<script>
+		{
+			/*13.4 事件类型
+			*Web 浏览器中可能发生的事件有很多类型。如前所述，不同的事件类型具有不同的信息，而“DOM3级事件”规定了以下几类事件
+				*UI（User Interface，用户界面）事件，当用户与页面上的元素交互时触发； 
+				*焦点事件，当元素获得或失去焦点时触发； 
+				*鼠标事件，当用户通过鼠标在页面上执行操作时触发； 
+				*滚轮事件，当使用鼠标滚轮（或类似设备）时触发； 
+				*文本事件，当在文档中输入文本时触发； 
+				*键盘事件，当用户通过键盘在页面上执行操作时触发； 
+				*合成事件，当为 IME（Input Method Editor，输入法编辑器）输入字符时触发； 
+				*变动（mutation）事件，当底层 DOM 结构发生变化时触发。
+				*变动名称事件，当元素或属性名变动时触发。此类事件已经被废弃，没有任何浏览器实现它们，因此本章不做介绍
+			 */
+			//除了这几类事件之外， HTML5 也定义了一组事件，而有些浏览器还会在 DOM 和 BOM 中实现其他专有事件。这些专有的事件一般都是根据开发人员需求定制的，没有什么规范，因此不同浏览器的实现有可能不一致
+			
+			//DOM3 级事件模块在 DOM2 级事件模块基础上重新定义了这些事件，也添加了一些新事件。包括IE9 在内的所有主流浏览器都支持 DOM2 级事件。 IE9 也支持 DOM3 级事件
+		};
+
+		{
+			/*13.4.1 UI事件
+			*UI 事件指的是那些不一定与用户操作有关的事件。这些事件在 DOM 规范出现之前，都是以这种或那种形式存在的，而在 DOM 规范中保留是为了向后兼容。现有的 UI 事件如下
+				*DOMActivate：表示元素已经被用户操作（通过鼠标或键盘）激活。这个事件在 DOM3 级事件中被废弃，但 Firefox 2+和 Chrome 支持它。考虑到不同浏览器实现的差异，不建议使用这个事件
+				*	
+				*load：当页面完全加载后在 window 上面触发，当所有框架都加载完毕时在框架集上面触发，当图像加载完毕时在<img>元素上面触发，或者当嵌入的内容加载完毕时在<object>元素上面触发。
+				* 
+				*unload：当页面完全卸载后在 window 上面触发，当所有框架都卸载后在框架集上面触发，或者当嵌入的内容卸载完毕后在<object>元素上面触发。
+				* 
+				*abort：在用户停止下载过程时，如果嵌入的内容没有加载完，则在<object>元素上面触发。
+				* 
+				*error：当发生 JavaScript 错误时在 window 上面触发，当无法加载图像时在<img>元素上面触发，当无法加载嵌入内容时在<object>元素上面触发，或者当有一或多个框架无法加载时在框架集上面触发。第 17 章将继续讨论这个事件。
+				* 
+				*select：当用户选择文本框（<input>或<texterea>）中的一或多个字符时触发。第 14 章将继续讨论这个事件。
+				* 
+				*resize：当窗口或框架的大小变化时在 window 或框架上面触发。
+				* 
+				*scroll：当用户滚动带滚动条的元素中的内容时，在该元素上面触发。 <body>元素中包含所加载页面的滚动条
+			*/
+			//多数这些事件都与 window 对象或表单控件相关。
+				// 除了 DOMActivate 之外，其他事件在 DOM2 级事件中都归为 HTML 事件（DOMActivate 在 DOM2级中仍然属于 UI 事件）。要确定浏览器是否支持 DOM2 级事件规定的 HTML 事件，可以使用如下代码：
+			let isSupported = document.implementation.hasFeature("HTMLEvents", "2.0");
+				// 注意，只有根据“DOM2 级事件”实现这些事件的浏览器才会返回 true。而以非标准方式支持这些事件的浏览器则会返回 false。要确定浏览器是否支持“DOM3 级事件”定义的事件，可以使用如下代码：
+			let isSupported1 = document.implementation.hasFeature("UIEvent", "3.0");	console.log(isSupported,isSupported1)
+
+
+			;{
+				/*1. load事件
+					*JavaScript 中最常用的一个事件就是 load。当页面完全加载后（包括所有图像、 JavaScript 文件、CSS 文件等外部资源），就会触发 window 上面的 load 事件
+				*/
+				let img = document.querySelector('img');
+				img.onload = function(){		
+					alert('img loaded');		console.log('img',Date.now())
+				};
+				window.onload= function(event){	console.log('body',Date.now())
+					alert('loaded!')
+				}
+
+				//但在兼容 DOM 的浏览器中， event.target 属性的值会被设置为document，而 IE 并不会为这个事件设置 srcElement 属性
+				`EventUtil.addHandler(window, "load", function(event){
+					alert("Loaded!");
+				});`;
+				`<body onload="alert('Loaded!')">`;
+
+				/*新图像元素不一定要从添加到文档后才开始下载，只要设置了 src 属性就会开始下载
+					*还有一些元素也以非标准的方式支持 load 事件。
+					*在 IE9+、 Firefox、 Opera、 Chrome 和 Safari 3+及更高版本中， <script>元素也会触发 load 事件，以便开发人员确定动态加载的 JavaScript 文件是否加载完毕。
+					****与图像不同，只有在设置了<script>元素的 src 属性并将该元素添加到文档后，才会开始下载 JavaScript 文件。
+					*换句话说，对于<script>元素而言，指定 src 属性和指定事件处理程序的先后顺序就不重要了
+				*/
+				`EventUtil.addHandler(window, "load", function(){
+					var image = document.createElement("img");
+					EventUtil.addHandler(image, "load", function(event){
+						event = EventUtil.getEvent(event);
+						alert(EventUtil.getTarget(event).src);
+					});
+					document.body.appendChild(image);
+					image.src = "smile.gif";
+				});`;
+			};
+
+			{
+				/*2 unload事件
+					*与 load 事件对应的是 unload 事件，这个事件在文档被完全卸载后触发。只要用户从一个页面切换到另一个页面，就会发生 unload 事件。
+					*而利用这个事件最多的情况是清除引用，以避免内存泄漏
+				*/
+				document.body.onunload = function(){
+					alert('unload')
+				}
+			};
+
+			{
+				/*resize 事件
+					*当浏览器窗口被调整到一个新的高度或宽度时，就会触发 resize 事件
+					*关于何时会触发 resize 事件，不同浏览器有不同的机制。 
+					*IE、 Safari、 Chrome 和 Opera 会在浏览器窗口变化了 1 像素时就触发 resize 事件，然后随着变化不断重复触发。 
+					*Firefox 则只会在用户停止调整窗口大小时才会触发 resize 事件。
+					*由于存在这个差别，应该注意不要在这个事件的处理程序中加入大计算量的代码，因为这些代码有可能被频繁执行，从而导致浏览器反应明显变慢
+				*/
+
+				/*节流防抖函数*/
+				//throttle()函数接受两个参数：要执行的函数以及在哪个作用域中执行。
+				//这个函数首先清除之前设置的任何定时器。定时器 ID 是存储在函数的 tId 属性中的，第一次把方法传递给 throttle()的时候，这个属性可能并不存在。
+				//接下来，创建一个新的定时器，并将其 ID 储存在方法的 tId 属性中。
+				//如果这是第一次对这个方法调用 throttle()的话，那么这段代码会创建该属性。定时器代码使用call()来确保方法在适当的环境中执行。
+				//如果没有给出第二个参数，那么就在全局作用域内执行该方法
+				
+
+				function resizeDiv(){	console.log('resize',Date.now())
+					var div = document.getElementById("myDiv");
+					div.style.height = div.offsetWidth + "px";
+				};
+				window.onresize = function(){
+					throttle(resizeDiv);
+				};
+			};
+
+
+			{
+				/*scroll 事件 
+					*虽然 scroll 事件是在 window 对象上发生的，但它实际表示的则是页面中相应元素的变化。
+					*在混杂模式下，可以通过<body>元素的 scrollLeft 和 scrollTop 来监控到这一变化；
+					*而在标准模式下，除 Safari 之外的所有浏览器都会通过<html>元素来反映这一变化（Safari 仍然基于<body>跟踪滚动位置）
+				*/
+				function scroll(event){
+					if (document.compatMode == "CSS1Compat"){	console.log(event)
+						alert(document.documentElement.scrollTop);
+					} else {
+						alert(document.body.scrollTop);
+					}
+				};
+				/*EventUtil.addHandler(window, "scroll", function(event){
+					if (document.compatMode == "CSS1Compat"){
+						alert(document.documentElement.scrollTop);
+					} else {
+						alert(document.body.scrollTop);
+					}
+				});*/
+				EventUtil.addHandler(window, "scroll", function(event){
+					event  = EventUtil.getEvent();		//console.log(event)
+					throttle(scroll,null,event)
+				});
+			};
+		};
+	</script>
+</body>
+</html>
