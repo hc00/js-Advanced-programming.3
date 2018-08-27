@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<a href="https://www.baidu.com">baidu</a>
+	<div id="myDiv">Right click or Ctrl+click me to get a custom context menu.
+	Click anywhere else to get the default context menu.</div>
+	<ul id="myMenu" style="position:absolute;visibility:hidden;background-color:silver">
+		<li><a href="http://www.nczonline.net">Nicholas’ site</a></li>
+		<li><a href="http://www.wrox.com">Wrox site</a></li>
+		<li><a href="http://www.yahoo.com">Yahoo!</a></li>
+	</ul>
+	<!-- <script src='browser.min.js'></script>
+	<script type="text/babel" >
+	        const Name = '张三';			//使用新增的关键字：const声明常量
+	        alert(Name);
+	    </script> -->
+	<script>		
+		/*var div = document.getElementById("myDiv");
+		div.attachEvent("onclick", function(){
+			alert(this === window); //true
+		});*/		
+		function addEvent(ele,type,handle){	//alert(ele)
+			if(ele.addEventListener){		//alert('addEventListener')
+				ele.addEventListener(type,handle,false);
+			}else if(ele.attachEvent){		//alert('attachEvevt')
+				ele.attachEvent('on'+type,handle);
+			}else {							//alert(125)
+				element["on" + type] = handler;
+			}
+		};			
+		addEvent(window, "load", function(event){
+			var div = document.getElementById("myDiv");
+			addEvent(div, "contextmenu", function(event){	//alert(123)				
+				event = event || window.event;
+				if (event.preventDefault){
+					event.preventDefault();
+				} else {
+					event.returnValue = false;
+				};
+				var menu = document.getElementById("myMenu");
+				menu.style.left = event.clientX + "px";
+				menu.style.top = event.clientY + "px";
+				menu.style.visibility = "visible";
+			});
+			addEvent(document, "click", function(event){	//alert(234)
+				document.getElementById("myMenu").style.visibility = "hidden";
+			});			
+		});
+		addEvent(window, "beforeunload", function(event){	//alert('beforeunload')			
+			event = event || window.event;
+			var message = "I'm really going to miss you if you go.";
+			event.returnValue = message;
+			return message;
+		})
+
+	</script>
+</body>
+</html>

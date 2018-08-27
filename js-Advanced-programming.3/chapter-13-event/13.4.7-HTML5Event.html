@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>HTMl5事件</title>
+</head>
+<body>
+	<div class="box">
+		<h3> HTML5 事件</h3>		
+		<ul>
+			<li>1. contextmenu 事件
+				<div id="myDiv">Right click or Ctrl+click me to get a custom context menu.
+				Click anywhere else to get the default context menu.</div>
+				<ul id="myMenu" style="position:absolute;visibility:hidden;background-color:silver">
+					<li><a href="http://www.nczonline.net">Nicholas’ site</a></li>
+					<li><a href="http://www.wrox.com">Wrox site</a></li>
+					<li><a href="http://www.yahoo.com">Yahoo!</a></li>
+				</ul>
+			</li>
+			<li>2. beforeunload事件<a href="https://www.baidu.com">baidu</a></li>
+			<li>3. DOMContentLoaded 事件
+				<div style="width:100px;height:200px;">
+					<img src="http://es6.ruanyifeng.com/images/cover-3rd.jpg" alt="" width='100%'><span class="load" style=" color: #dd36de;"></span>
+				</div>
+			</li>
+			<li>4. readystatechange 事件 <br> 
+				<span class="readyState" style=" color: #dd36de;"></span>
+			</li>
+			<li>5</li>
+		</ul>
+	</div>
+	
+
+	<script src='./EventUtil.js'></script>
+	<script>
+
+		/*13.4.7 HTML5 事件
+			*DOM 规范没有涵盖所有浏览器支持的所有事件。很多浏览器出于不同的目的——满足用户需求或解决特殊问题，还实现了一些自定义的事件。 HTML5 详尽列出了浏览器应该支持的所有事件。
+			*本节只讨论其中得到浏览器完善支持的事件，但并非全部事件。
+		*/
+			
+		{
+			`1. contextmenu 事件
+				Windows 95 在 PC 中引入了上下文菜单的概念，即通过单击鼠标右键可以调出上下文菜单。不久，这个概念也被引入了 Web 领域。
+			为了实现上下文菜单，开发人员面临的主要问题是如何确定应该显示上下文菜单（在 Windows 中，是右键单击；在 Mac 中，是 Ctrl+单击），以及如何屏蔽与该操作关联的默认上下文菜单。为解决这个问题，就出现了 contextmenu 这个事件，用以表示何时应该显示上下文菜单，以便开发人员取消默认的上下文菜单而提供自定义的菜单。
+
+				由于 contextmenu 事件是冒泡的，因此可以为 document 指定一个事件处理程序，用以处理页面中发生的所有此类事件。
+			这个事件的目标是发生用户操作的元素。在所有浏览器中都可以取消这个事件：在兼容 DOM 的浏览器中，使用 event.preventDefalut()；在 IE 中，将 event.returnValue 的值设置为 false。因为 contextmenu 事件属于鼠标事件，所以其事件对象中包含与光标位置有关的所有属性。通常使用 contextmenu 事件来显示自定义的上下文菜单，而使用 onclick 事件处理程序来隐藏该菜单。以下面的 HTML 页面为例`;
+			EventUtil.addHandler(window, "load", function(event){
+				var div = document.getElementById("myDiv");
+				EventUtil.addHandler(div, "contextmenu", function(event){	//alert(123)
+					event = EventUtil.getEvent(event);
+					EventUtil.preventDefault(event);
+					var menu = document.getElementById("myMenu");
+					menu.style.left = event.clientX + "px";
+					menu.style.top = event.clientY + "px";
+					menu.style.visibility = "visible";
+				});
+				EventUtil.addHandler(document, "click", function(event){	//alert(234)
+					document.getElementById("myMenu").style.visibility = "hidden";
+				});
+				/*EventUtil.addHandler(document,'contextmenu',function(event){
+					event = EventUtil.getEvent(event);				console.log(event)
+					EventUtil.preventDefault(event);
+					var menu = document.getElementById("myMenu");
+					menu.style.left = event.clientX + "px";
+					menu.style.top = event.clientY + "px";
+					menu.style.visibility = "visible";			
+				});*/
+			});
+		};
+
+		{
+			/*2. beforeunload事件*/
+			`	之所以有发生在 window 对象上的 beforeunload 事件，是为了让开发人员有可能在页面卸载前阻止这一操作。
+			这个事件会在浏览器卸载页面之前触发，可以通过它来取消卸载并继续使用原有页面。但是，不能彻底取消这个事件，因为那就相当于让用户无法离开当前页面了。为此，这个事件的意图是将控制权交给用户。显示的消息会告知用户页面行将被卸载（正因为如此才会显示这个消息），询问用户是否真的要关闭页面，还是希望继续留下来.
+
+			为了显示这个弹出对话框，必须将 event.returnValue 的值设置为要显示给用户的字符串（对IE 及 Fiefox 而言），同时作为函数的值返回（对 Safari 和 Chrome 而言）
+			`;
+			//IE 和 Firefox、 Safari 和 Chrome 都支持 beforeunload 事件，也都会弹出这个对话框询问用户是否真想离开。 Opera 11 及之前的版本不支持 beforeunload 事件
+			EventUtil.addHandler(window, "beforeunload", function(event){
+				event = EventUtil.getEvent(event);
+				var message = "I'm really going to miss you if you go.";
+				event.returnValue = message;
+				return message;
+			});
+		};
+
+		{
+			/*3. DOMContentLoaded 事件*/
+			`	如前所述， window 的 load 事件会在页面中的一切都加载完毕时触发，但这个过程可能会因为要加载的外部资源过多而颇费周折。
+			而 DOMContentLoaded 事件则在形成完整的 DOM 树之后就会触发，不理会图像、 JavaScript 文件、 CSS 文件或其他资源是否已经下载完毕。
+			与 load 事件不同，DOMContentLoaded 支持在页面下载的早期添加事件处理程序，这也就意味着用户能够尽早地与页面进行交互。
+
+				要处理 DOMContentLoaded 事件，可以为 document 或 window 添加相应的事件处理程序（尽管这个事件会冒泡到 window，但它的目标实际上是 document）`;
+			let loadSpan = document.querySelector('.load');
+			EventUtil.addHandler(document, "DOMContentLoaded", function(event){
+				console.log("Contentloaded",Date.now());
+				loadSpan.innerText = 'DOMContentLoaded:'+Date.now();
+			});
+			EventUtil.addHandler(window, "load", function(event){
+				console.log("Loaded!",Date.now());
+				loadSpan.innerHTML += '<br/> load:' +Date.now();
+			});
+
+			let img = document.documentElement.getElementsByTagName('img')[0];
+			EventUtil.addHandler(img, "load", function(event){
+				console.log("img-Loaded!",Date.now());
+				loadSpan.innerHTML += '<br/> imgLoad:' +Date.now();
+			});
+			//IE9+、 Firefox、 Chrome、 Safari 3.1+和 Opera 9+都支持 DOMContentLoaded 事件，通常这个事件既可以添加事件处理程序，也可以执行其他 DOM 操作。这个事件始终都会在 load 事件之前触发。
+			//对于不支持 DOMContentLoaded 的浏览器，我们建议在页面加载期间设置一个时间为 0 毫秒的超时调用
+			setTimeout(function(){
+				//在此添加事件处理程序
+				console.log("timeout",Date.now() )
+			}, 0);
+			//这段代码的实际意思就是：“在当前 JavaScript 处理完成后立即运行这个函数。”
+			//在页面下载和构建期间，只有一个 JavaScript 处理过程，因此超时调用会在该过程结束时立即触发。
+			//至于这个时间与DOMContentLoaded 被触发的时间能否同步，主要还是取决于用户使用的浏览器和页面中的其他代码。
+			//为了确保这个方法有效，必须将其作为页面中的第一个超时调用；即便如此，也还是无法保证在所有环境中该超时调用一定会早于 load 事件被触发
+		};
+
+		{
+			/*4. readystatechange 事件
+				*IE 为 DOM 文档中的某些部分提供了 readystatechange 事件。这个事件的目的是提供与文档或元素的加载状态有关的信息，但这个事件的行为有时候也很难预料。支持 readystatechange 事件的每个对象都有一个 readyState 属性，可能包含下列 5 个值中的一个
+				
+					*uninitialized（未初始化）：对象存在但尚未初始化。
+					* loading（正在加载）：对象正在加载数据。				 
+					*loaded（加载完毕）：对象加载数据完成。					
+					*interactive（交互）：可以操作对象了，但还没有完全加载。					
+				 	*complete（完成）：对象已经加载完毕
+				*这个事件的 event 对象不会提供任何信息，也没有目标对象
+			*/
+			//对于 document 而言，值为"interactive"的 readyState 会在与 DOMContentLoaded 大致相同的时刻触发 readystatechange 事件。此时， DOM 树已经加载完毕，可以安全地操作它了，因此就会进入交互（interactive）阶段。但与此同时，图像及其他外部文件不一定可用
+			var readyStateSpan = document.querySelector('.readyState');
+			EventUtil.addHandler(document, "readystatechange", function(event){	//alert(234)
+				console.log('readystatechange',document.readyState,Date.now())
+				if (document.readyState == "interactive"){
+					// alert("Content loaded");
+					readyStateSpan.innerText = 'readyState——interactive:' + Date.now();
+				}else if (document.readyState == 'complete') {
+					readyStateSpan.innerHTML += '<br/> readyState——complete:' +Date.now();
+				};
+			});
+
+			`为了尽可能抢到先机，有必要同时检测交互和完成阶段，如下面的例子所示。
+			EventUtil.addHandler(document, "readystatechange", function(event){
+				if (document.readyState == "interactive" || document.readyState == "complete"){
+					EventUtil.removeHandler(document, "readystatechange", arguments.callee);
+					alert("Content loaded");
+				}
+			});
+			`;
+			setTimeout(function(){
+				var script = document.createElement("script");
+				EventUtil.addHandler(script, "readystatechange", function(event){	alert(156)
+					event = EventUtil.getEvent(event);
+					var target = EventUtil.getTarget(event);			console.log(target.readyState)
+					if (target.readyState == "loaded" || target.readyState == "complete"){
+						EventUtil.removeHandler(target, "readystatechange", arguments. callee);
+						alert("Script Loaded");
+					}
+				});
+				script.src = "https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js";
+				document.body.appendChild(script);
+			}, 100)			
+		};
+	</script>
+</body>
+</html>

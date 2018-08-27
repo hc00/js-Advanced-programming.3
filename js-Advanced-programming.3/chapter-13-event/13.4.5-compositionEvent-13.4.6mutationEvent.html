@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>复合事件、变动事件</title>
+</head>
+<body>
+	<div class="box">
+		<p>复合事件（composition event）是 DOM3 级事件中新添加的一类事件，用于处理 IME 的输入序列。
+IME（Input Method Editor，输入法编辑器）可以让用户输入在物理键盘上找不到的字符。例如，使用拉
+丁文键盘的用户通过 IME 照样能输入日文字符。 IME 通常需要同时按住多个键，但最终只输入一个字
+符。复合事件就是针对检测和处理这种输入而设计的。</p>
+		<div class='list'>
+			<ul id="myList">
+				<li>Item 1</li>
+				<li>Item 2</li>
+				<li>Item 3</li>
+			</ul>
+		</div>
+	</div>
+
+	<script src='EventUtil.js'></script>
+	<script>
+		/*13.4.5 复合事件
+			*复合事件（composition event）是 DOM3 级事件中新添加的一类事件，用于处理 IME 的输入序列。
+		IME（Input Method Editor，输入法编辑器）可以让用户输入在物理键盘上找不到的字符。
+		例如，使用拉丁文键盘的用户通过 IME 照样能输入日文字符。 IME 通常需要同时按住多个键，但最终只输入一个字符。
+		复合事件就是针对检测和处理这种输入而设计的。有以下三种复合事件
+			*compositionstart：在 IME 的文本复合系统打开时触发，表示要开始输入了
+			*compositionupdate：在向输入字段中插入新字符时触发
+			* compositionend：在 IME 的文本复合系统关闭时触发，表示返回正常键盘输入状态
+		*/
+		//要确定浏览器是否支持复合事件，可以使用以下代码：
+		var isSupported = document.implementation.hasFeature("CompositionEvent", "3.0");
+
+		{
+			/*13.4.6	变动事件
+				*DOM2 级的变动（mutation）事件能在 DOM 中的某一部分发生变化时给出提示。变动事件是为 XML或 HTML DOM 设计的，并不特定于某种语言。 DOM2 级定义了如下变动事件。 
+					*DOMSubtreeModified：在 DOM 结构中发生任何变化时触发。这个事件在其他任何事件触发后都会触发。
+					* 
+					*DOMNodeInserted：在一个节点作为子节点被插入到另一个节点中时触发。
+					* 
+					*DOMNodeRemoved：在节点从其父节点中被移除时触发。 
+					*
+					*DOMNodeInsertedIntoDocument：在一个节点被直接插入文档或通过子树间接插入文档之后触发。这个事件在 DOMNodeInserted 之后触发。 
+					*
+					*DOMNodeRemovedFromDocument：在一个节点被直接从文档中移除或通过子树间接从文档中移除之前触发。这个事件在 DOMNodeRemoved 之后触发。
+					* 
+					*DOMAttrModified：在特性被修改之后触发。
+					* 
+					*DOMCharacterDataModified：在文本节点的值发生变化时触发
+			*/
+
+			//使用下列代码可以检测出浏览器是否支持变动事件：
+			var isSupported = document.implementation.hasFeature("MutationEvents", "2.0");
+
+			`1. 删除节点
+				在使用removeChild()或replaceChild()从 DOM中删除节点时，首先会触发DOMNodeRemoved事件。
+			这个事件的目标（event.target）是被删除的节点，而 event.relatedNode 属性中包含着对目标节点父节点的引用。
+			在这个事件触发时，节点尚未从其父节点删除，因此其 parentNode 属性仍然指向父节点（与 event.relatedNode 相同）。
+			这个事件会冒泡，因而可以在 DOM 的任何层次上面处理它。
+
+				如果被移除的节点包含子节点，那么在其所有子节点以及这个被移除的节点上会相继触发DOMNodeRemovedFromDocument 事件。
+			但这个事件不会冒泡，所以只有直接指定给其中一个子节点的事件处理程序才会被调用。这个事件的目标是相应的子节点或者那个被移除的节点，除此之外 event对象中不包含其他信息。
+
+				紧随其后触发的是 DOMSubtreeModified 事件。这个事件的目标是被移除节点的父节点；此时的event 对象也不会提供与事件相关的其他信息。`;
+			/* 	
+				<div class='list'>
+					<ul id="myList">
+						<li>Item 1</li>
+						<li>Item 2</li>
+						<li>Item 3</li>
+					</ul>
+				</div>;
+				在这个例子中，我们假设要移除<ul>元素。此时，就会依次触发以下事件。
+				(1) 在<ul>元素上触发 DOMNodeRemoved 事件。 relatedNode 属性等于 document.body(div.list)。
+				(2) 在<ul>元素上触发 DOMNodeRemovedFromDocument 事件。
+				(3) 在身为<ul>元素子节点的每个<li>元素及文本节点上触发 DOMNodeRemovedFromDocument事件。
+				(4) 在 document.body 上触发 DOMSubtreeModified 事件，因为<ul>元素是 document.body的直接子元素。
+			 */
+			
+			`2. 插入节点
+				在使用 appendChild()、 replaceChild()或 insertBefore()向 DOM 中插入节点时，首先会触发 DOMNodeInserted 事件。
+			这个事件的目标是被插入的节点，而 event.relatedNode 属性中包含一个对父节点的引用。
+			在这个事件触发时，节点已经被插入到了新的父节点中。这个事件是冒泡的，因此可以在 DOM 的各个层次上处理它。
+
+				紧接着，会在新插入的节点上面触发 DOMNodeInsertedIntoDocument 事件。
+			这个事件不冒泡，因此必须在插入节点之前为它添加这个事件处理程序。
+			这个事件的目标是被插入的节点，除此之外event 对象中不包含其他信息。
+
+				最后一个触发的事件是 DOMSubtreeModified，触发于新插入节点的父节点`;
+			EventUtil.addHandler(window, "load", function(event){
+				var list = document.getElementById("myList");		
+				//移除节点		
+				EventUtil.addHandler(document, "DOMNodeRemoved", function(event){
+					console.log(event.type);
+					console.log(event.target);			//<ul/>
+					console.log(event.relatedNode);		//<div class="list"></div>			
+				});
+				EventUtil.addHandler(list.firstElementChild, "DOMNodeRemovedFromDocument", function(event){
+					console.log(event.type);				
+					console.log(event.target);			//<li>Item 1</li>
+				});
+				EventUtil.addHandler(document, "DOMSubtreeModified", function(event){
+					console.log(event.type);
+					console.log(event.target);			//<div class="list"></div>
+				});
+				list.parentNode.removeChild(list);
+				console.log('%c------------------------------------------------','color:green')				
+			});
+
+			//插入节点
+			var ul = document.createElement('ul');				
+			document.querySelector('.list').appendChild(ul);
+
+			setTimeout(function(){
+				console.log('%c------------------------------------------------','color:gold')
+				var item = document.createElement("li");
+				item.appendChild(document.createTextNode("Item 4"));
+				
+				EventUtil.addHandler(document, "DOMNodeInserted", function(event){
+					console.log(event.type);
+					console.log(event.target);				//<li>item4</li>
+					console.log(event.relatedNode);			//<ul><li>item4</li></ul>
+				});
+				EventUtil.addHandler(item, "DOMNodeInsertedIntoDocument", function(event){
+					console.log(event.type);
+					console.log(event.target);				//<li>item4</li>
+				});
+				/*EventUtil.addHandler(document, "DOMSubtreeModified", function(event){
+					console.log(event.type);
+					console.log(event.target);				//<ul><li>item4</li></ul>	(:106)	
+				});*/
+				
+				ul.appendChild(item);
+			},100)
+		}
+	</script>
+</body>
+</html>
