@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>过滤输入</title>
+	<style>
+		.pdiv{
+			position: relative;
+			display: none;
+		}
+		.btn {
+			position: absolute;
+			top: -21px;
+			right: 10px;
+		}
+		.asd:hover .pdiv{
+			display: block;
+		}
+	</style>
+</head>
+<body>
+	<div class="box">
+		<div class="form">
+			<form action="">
+				text:<input type="text" name='msg'> 			<br>
+				number:<input type="number" name='num'> 	<br>
+				email:<input type="email" name='email'> 		<br>
+				url:<input type="url" name='url'> 			<br>
+				color:<input type="color" name='color'> 		<br>
+				range:<input type="range" name='range'>		<br>
+				datetime:<input type="datetime-local" name='datetime'>	<br>
+				search:<input type="search" name='search'>	<br>
+				<input type="text">
+
+			</form>
+			<div class="asd">
+				<div contenteditable class="box1">div</div>
+				<div class="pdiv"><button class="btn">复制</button></div>
+			</div>
+			
+		</div>
+	</div>
+	<script src='../chapter-13-event/EventUtil.js'></script>
+	<script>
+		/*14.2.2 过滤输入
+			*我们经常会要求用户在文本框中输入特定的数据，或者输入特定格式的数据。
+			*例如，必须包含某些字符，或者必须匹配某种模式。由于文本框在默认情况下没有提供多少验证数据的手段，因此必须使用JavaScript 来完成此类过滤输入的操作。
+			*而综合运用事件和 DOM 手段，就可以将普通的文本框转换成能够理解用户输入数据的功能型控件。
+		*/
+		var textbox = document.forms[0].elements[0];
+		{
+			/*1.屏蔽字符*/
+			//有时候，我们需要用户输入的文本中包含或不包含某些字符。例如，电话号码中不能包含非数值字符。如前所述，响应向文本框中插入字符操作的是 keypress 事件。因此，可以通过阻止这个事件的默认行为来屏蔽此类字符。
+			
+			`在极端的情况下，可以通过下列代码屏蔽所有按键操作。
+			EventUtil.addHandler(textbox, "keypress", function(event){
+				event = EventUtil.getEvent(event);
+				EventUtil.preventDefault(event);
+			});`;
+
+			// 如果只想屏蔽特定的字符，则需要检测 keypress 事件对应的字符编码，然后再决定如何响应。例如，下列代码只允许用户输入数值。
+			EventUtil.addHandler(textbox, "keypress", function(event){
+				event = EventUtil.getEvent(event);
+				var target = EventUtil.getTarget(event);
+				var charCode = EventUtil.getCharCode(event);	console.log(charCode,String.fromCharCode(charCode) )
+				if (!/\d/.test(String.fromCharCode(charCode)) && charCode > 9 && !event.ctrlKey){	
+					EventUtil.preventDefault(event);
+				}
+			});
+			// 在这个例子中，我们使用 EventUtil.getCharCode()实现了跨浏览器取得字符编码。然后，使用 String.fromCharCode()将字符编码转换成字符串，再使用正则表达式 /\d/ 来测试该字符串，从而确定用户输入的是不是数值。如果测试失败，那么就使用 EventUtil.preventDefault()屏蔽按键事件。结果，文本框就会忽略所有输入的非数值
+			`Firefox 和 Safari（3.1 版本以前）会对向上键、向下键、退格键和删除键触发 keypress 事件；Safari 3.1 及更新版本则不会对这些键触发 keypress 事件;
+			在 Firefox 中，所有由非字符键触发的 keypress 事件对应的字符编码为 0，而在 Safari 3 以前的版本中，对应的字符编码全部为 8。
+			除此之外，还有一个问题需要处理：复制、粘贴及其他操作还要用到 Ctrl 键。在除 IE 之外的所有浏览器中，前面的代码也会屏蔽 Ctrl+C、 Ctrl+V，以及其他使用 Ctrl 的组合键。因此，最后还要添加一个检测条件，以确保用户没有按下 Ctrl 键`;
+		};
+
+		{
+			/*2. 操作剪贴板
+				*HTML 5 后来也把剪贴板事件纳入了规范。下列就是 6 个剪贴板事件
+					*beforecopy：在发生复制操作前触发。 
+					*copy：在发生复制操作时触发。 
+					*beforecut：在发生剪切操作前触发。 
+					*cut：在发生剪切操作时触发。 
+					*beforepaste：在发生粘贴操作前触发。 
+					*paste：在发生粘贴操作时触发。
+			*/
+			let input = document.forms[0].lastElementChild;
+			/*EventUtil.addHandler(window,'beforecopy',function(event){
+				event = EventUtil.getEvent(event);		console.log('beforecopy',event)
+			});*/
+			EventUtil.addHandler(window,'copy',function(event){
+				event = EventUtil.getEvent(event);						console.log('copy',event)						
+				let copyText = window.getSelection(0).toString();		console.log('选取的复制内容是：'+copyText)
+				let text = '这是修改的复制内容:' + copyText;	
+
+				EventUtil.preventDefault(event);
+				EventUtil.setClipboardText(event,text);	
+				// return text;			
+			});
+			/*EventUtil.addHandler(input,'beforepaste',function(event){
+				event = EventUtil.getEvent(event);		console.log('beforepaste',event)
+				var text = EventUtil.getClipboardText(event);		console.log(text)
+			});*/
+			EventUtil.addHandler(window,'paste',function(event){		//alert('paste')
+				event = EventUtil.getEvent(event);						console.log('paste',event)				
+				// EventUtil.clearClipboardText(event);
+				var text = EventUtil.getClipboardText(event);			console.log(text)				
+			});
+			EventUtil.addHandler(input,'paste',function(event){
+				event = EventUtil.getEvent(event);						console.log('input-paste',event)
+				var text = EventUtil.getClipboardText(event);			console.log(text)
+				//只允许复制num类型的值
+				if (!/^\d*$/.test(text)){
+					EventUtil.preventDefault(event);
+				}
+			});
+			`在实际的事件发生之前，通过 beforecopy、 beforecut 和 beforepaste 事件可以在向剪贴板发送数据，或者从剪贴板取得数据之前修改数据。不过，取消这些事件并不会取消对剪贴板的操作——只有取消 copy、 cut 和 paste 事件，才能阻止相应操作发生`;
+
+			`要访问剪贴板中的数据，可以使用 clipboardData 对象：在 IE 中，这个对象是 window 对象的属性；而在 Firefox 4+、 Safari 和 Chrome 中，这个对象是相应 event 对象的属性。但是，在 Firefox、Safari 和 Chorme 中，只有在处理剪贴板事件期间 clipboardData 对象才有效，这是为了防止对剪贴板的未授权访问；在 IE 中，则可以随时访问 clipboardData 对象。为了确保跨浏览器兼容性，最好只在发生剪贴板事件期间使用这个对象。
+
+			这个 clipboardData 对象有三个方法：getData()、setData()和 clearData()。
+			其中，getData()用于从剪贴板中取得数据，它接受一个参数，即要取得的数据的格式。在 IE 中，有两种数据格式： "text"和"URL"。在 Firefox、 Safari 和 Chrome 中，这个参数是一种 MIME 类型；不过，可以用"text"代表"text/plain"
+			类似地， setData()方法的第一个参数也是数据类型，第二个参数是要放在剪贴板中的文本。对于第一个参数， IE 照样支持"text"和"URL"，而 Safari 和 Chrome 仍然只支持 MIME 类型。但是，与getData()方法不同的是， Safari 和 Chrome 的 setData()方法不能识别"text"类型。这两个浏览器在成功将文本放到剪贴板中后，都会返回 true；否则，返回 false。`;
+			/*Firefox、 Safari 和 Chrome 只允许在 onpaste 事件处理程序中访问 getData()方法。
+			由于并非所有浏览器都支持访问剪贴板，所以更简单的做法是屏蔽一或多个剪贴板操作。在支持copy、 cut 和 paste 事件的浏览器中（IE、 Safari、 Chrome 和 Firefox 3 及更高版本），很容易阻止这些事件的默认行为。在 Opera 中，则需要阻止那些会触发这些事件的按键操作，同时还要阻止在文本框中显示上下文菜单*/
+
+			//点击按钮实现复制
+			let btn = document.querySelector('.btn');
+			let box1 = document.querySelector('.box1');
+			EventUtil.addHandler(btn,'click',function(event){			console.time('copy');
+				let text = box1.innerText;
+				var newInput = document.createElement('input');
+				newInput.value = text;
+				newInput.setAttribute('readonly', true);
+				document.body.appendChild(newInput);		//console.log(newInput.value.length)
+
+				// newInput.select();
+				let length = newInput.value.length;
+				newInput.focus();
+				newInput.setSelectionRange(0,length);
+
+				// if(document.execCommand('copy')){
+					document.execCommand('copy');				
+				// };
+				document.body.removeChild(newInput);
+				text = '';													console.timeEnd('copy');
+			});
+			/*document.execCommand()
+				*bool = document.execCommand(aCommandName, aShowDefaultUI, aValueArgument)
+				*return:一个 Boolean ，如果是 false 则表示操作不被支持或未被启用。
+				*arguments:
+					*aCommandName：一个 DOMString ，命令的名称。可用命令列表请参阅 命令 。
+						*命令包含：backColor,bold,contentReadOnly,copy,createLink,cut,decreaseFontSize,delete,enableInlineTableEditing,enableObjectResizing,fontName,fontSize,foreColor,formatBlock,forwardDelete,heading,hiliteColor,increaseFontSize,indent,insertBrOnReturn,insertHorizontalRule,insertHTML,insertImage,insertOrderedList,insertUnorderedList,insertParagraph,insertText,italic,justifyCenter,justifyFull,justifyLeft,justifyRight,outdent,paste,redo,removeFormat,selectAll,strikeThrough,subscript,superscript,underline,undo,unlink,useCSS ,styleWithCSS
+					*aShowDefaultUI：一个 Boolean， 是否展示用户界面，一般为 false。Mozilla 没有实现。
+					*aValueArgument：一些命令（例如insertImage）需要额外的参数（insertImage需要提供插入image的url），默认为null。
+			*/
+			`// 禁止文字选择
+			document.body.onselectstart = e => {
+        			console.log(e, '文字选择');
+        			return false;
+        			// e.preventDefault();
+    			};
+    			// css 禁止文本选择 这样不会触发js
+		    	body {
+		        	user-select: none;
+		    		-moz-user-select: none;
+		          	-webkit-user-select: none;
+		     		-ms-user-select: none;
+		    	}`;
+		}
+	</script>
+</body>
+</html>

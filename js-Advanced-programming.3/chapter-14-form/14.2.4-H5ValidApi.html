@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>HTML5约束验证API</title>
+</head>
+<body>
+	<div class="wrapper">
+		<div class="form">
+			<form action="">
+				<input type="text" name="username" required>		<br>
+				num:<input type="number" value='55' min="0" max="100" step="5" name="count">	<br>	
+				pattern:<input type="text" pattern="\d+" name="count"> <br>
+				email:<input type="email" name ="email">					<br>
+				url:<input type="url" name="homepage">		<br>
+				<button>submit</button>
+			</form>
+		</div>
+	</div>
+	<script src='../chapter-13-event/EventUtil.js'></script>
+	<script>
+		/*14.2.4 HTML5约束验证API*/
+		//为了在将表单提交到服务器之前验证数据，HTML5 新增了一些功能。有了这些功能，即便 JavaScript被禁用或者由于种种原因未能加载，也可以确保基本的验证。换句话说，浏览器自己会根据标记中的规则执行验证，然后自己显示适当的错误消息（完全不用 JavaScript 插手）。当然，这个功能只有在支持HTML5 这部分内容的浏览器中才有效
+		`只有在某些情况下表单字段才能进行自动验证。具体来说，就是要在 HTML 标记中为特定的字段指定一些约束，然后浏览器才会自动执行表单验证`;
+		{
+			/*1. 必填字段
+			第一种情况是在表单字段中指定了 required 属性，*/
+			`<input type="text" name="username" required>`;
+			// 在 JavaScript 中，通过对应的 required 属性，可以检查某个表单字段是否为必填字段。
+			var isUsernameRequired = document.forms[0].elements["username"].required;
+			// 另外，使用下面这行代码可以测试浏览器是否支持 required 属性。
+			var isRequiredSupported = "required" in document.createElement("input");
+			// 以上代码通过特性检测来确定新创建的<input>元素中是否存在 required 属性
+		};
+
+		{
+			/*2. 其他输入类型*/
+
+			// 要检测浏览器是否支持这些新类型，可以在 JavaScript 创建一个<input>元素，然后将 type 属性设置为"email"或"url"，最后再检测这个属性的值。不支持它们的旧版本浏览器会自动将未知的值设置为"text"，而支持的浏览器则会返回正确的值。例如：
+			let input = document.createElement("input");
+			input.type = "email";
+			let isEmailSupported = (input.type == "email");		console.log('isEmailSupported:'+isEmailSupported)
+			// 要注意的是，如果不给<input>元素设置 required 属性，那么空文本框也会验证通过。 另一方面，设置特定的输入类型并不能阻止用户输入无效的值，只是应用某些默认的验证而已
+		};
+
+		{
+			/*3. 数值类型*/
+			let input = document.forms[0].elements[1];
+			// 还有两个方法： stepUp()和 stepDown()，都接收一个可选的参数：要在当前值基础上加上或减去的数值。（默认是加或减 1。）
+			// 这两个方法还没有得到任何浏览器支持，但下面的例子演示了它们的用法。
+			
+			/*step默认为1时*/
+			input.stepUp(); //加 1
+			input.stepUp(5); //加 5
+			input.stepDown(); //减 1
+			input.stepDown(10); //减 10
+		};
+
+		{
+			/*5. 检测有效性
+				*使用 checkValidity()方法可以检测表单中的某个字段是否有效。所有表单字段都有个方法，如果字段的值有效，这个方法返回 true，否则返回 false。字段的值是否有效的判断依据是本节前面介绍过的那些约束。换句话说，必填字段中如果没有值就是无效的，而字段中的值与 pattern 属性不匹配也是无效的。
+				*要检测整个表单是否有效，可以在表单自身调用 checkValidity()方法
+				*
+				* 与 checkValidity()方法简单地告诉你字段是否有效相比， validity 属性则会告诉你为什么字段有效或无效。这个对象中包含一系列属性，每个属性会返回一个布尔值。 
+					* customError ：如果设置了 setCustomValidity()，则为 true，否则返回 false。 
+					* patternMismatch：如果值与指定的 pattern 属性不匹配，返回 true。 
+					* rangeOverflow：如果值比 max 值大，返回 true。 
+					* rangeUnderflow：如果值比 min 值小，返回 true。 
+					* stepMisMatch：如果 min 和 max 之间的步长值不合理，返回 true。 
+					* tooLong：如果值的长度超过了 maxlength 属性指定的长度，返回 true。有的浏览器（如 Firefox 4）会自动约束字符数量，因此这个值可能永远都返回 false。 
+					* typeMismatch：如果值不是"mail"或"url"要求的格式，返回 true。 
+					* valid：如果这里的其他属性都是 false，返回 true。 checkValidity()也要求相同的值。 
+					* valueMissing：如果标注为 required 的字段中没有值，返回 true。
+			*/
+		};
+
+		{
+			/*6. 禁用验证
+				*通过设置 novalidate 属性，可以告诉表单不进行验证
+				*在 JavaScript 中使用 noValidate 属性可以取得或设置这个值，如果这个属性存在，值为 true，如果不存在，值为 false
+				*如果一个表单中有多个提交按钮，为了指定点击某个提交按钮不必验证表单，可以在相应的按钮上添加 formnovalidate 属性
+			*/
+			`<form method="post" action="foo.php">
+				<!--这里插入表单元素-->
+				<input type="submit" value="Regular Submit">
+				<input type="submit" formnovalidate name="btnNoValidate" value="Non-validating Submit">
+			</form>`;
+			//禁用验证
+			// document.forms[0].elements["btnNoValidate"].formNoValidate = true;
+		}
+
+	</script>
+</body>
+</html>
