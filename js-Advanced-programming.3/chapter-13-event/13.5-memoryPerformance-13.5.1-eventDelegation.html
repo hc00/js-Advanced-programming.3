@@ -58,6 +58,15 @@
 					}						
 				})(i)
 			};*/
+			/*for(var i =0;i<lis.length;i++){
+				lis[i].onclick = (function(n){
+					return function(){
+						alert(n)
+					}
+				})(i);
+			};*/
+
+			//事件委托
 			var list = document.getElementById("myLinks");
 			EventUtil.addHandler(list, "click", function(event){
 				event = EventUtil.getEvent(event);

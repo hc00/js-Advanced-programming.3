@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>富文本编辑</title>
+	<style>
+		.box{
+			width: 400px;
+			background: skyblue;
+		}
+	</style>
+</head>
+<body>
+	<div class="wrapper">
+		<iframe name="richedit" style="height:100px;width:100px;" src="blank.html"></iframe>
+		<div class="box" contenteditable>另一种编辑富文本内容的方式是使用名为 contenteditable 的特殊属性，这个属性也是由 IE 最
+		早实现的。可以把 contenteditable 属性应用给页面中的任何元素，然后用户立即就可以编辑该元素。
+		这种方法之所以受到欢迎，是因为它不需要 iframe、空白页和 JavaScript，只要为元素设置
+		contenteditable 属性即可</div>	
+	</div>
+
+	<script>
+		/*14.4.5 富文本编辑*/
+			/*富文本编辑，又称为 WYSIWYG（What You See Is What You Get，所见即所得）。在网页中编辑富
+		文本内容，是人们对 Web 应用程序最大的期待之一。虽然也没有规范，但在 IE 最早引入的这一功能基
+		础上，已经出现了事实标准。而且， Opera、 Safari、 Chrome 和 Firefox 都已经支持这一功能。这一技术
+		的本质，就是在页面中嵌入一个包含空 HTML 页面的 iframe。通过设置 designMode 属性，这个空白
+		的 HTML 页面可以被编辑，而编辑对象则是该页面<body>元素的 HTML 代码。 designMode 属性有两
+		个可能的值： "off"（默认值）和"on"。在设置为"on"时，整个文档都会变得可以编辑（显示插入符
+		号），然后就可以像使用字处理软件一样，通过键盘将文本内容加粗、变成斜体，等等*/
+		window.onload = function(e){
+			frames["richedit"].document.designMode = "on";
+		};
+
+		{
+			/*14.5.1 使用contenteditable属性*/
+				/*另一种编辑富文本内容的方式是使用名为 contenteditable 的特殊属性，这个属性也是由 IE 最
+			早实现的。可以把 contenteditable 属性应用给页面中的任何元素，然后用户立即就可以编辑该元素。
+			这种方法之所以受到欢迎，是因为它不需要 iframe、空白页和 JavaScript，只要为元素设置
+			contenteditable 属性即可*/
+				`contenteditable 属性有三个可能的值： "true"表示打开、 "false"表示关闭， "inherit"表示
+			从父元素那里继承（因为可以在 contenteditable 元素中创建或删除元素）。支持 contenteditable
+			属性的元素有 IE、 Firefox、 Chrome、 Safari 和 Opera。在移动设备上，支持 contenteditable 属性的
+			浏览器有 iOS 5+中的 Safari 和 Android 3+中的 WebKit。`;
+		};
+
+		{
+			/*14.5.2 操作富文本*/
+
+			`与富文本编辑器交互的主要方式，就是使用 document.execCommand()。这个方法可以对文档执行预定义的命令，而且可以应用大多数格式;
+			可以为 document.execCommand()方法传递 3 个参数：
+				要执行的命令名称、表示浏览器是否应该为当前命令提供用户界面的一个布尔值和执行命令必须的一个值（如果不需要值，则传递 null）。
+				为了确保跨浏览器的兼容性，第二个参数应该始终设置为 false，因为 Firefox 会在该参数为 true 时抛出错误`;
+			/*document.execCommand()
+				*bool = document.execCommand(aCommandName, aShowDefaultUI, aValueArgument)
+				*return:一个 Boolean ，如果是 false 则表示操作不被支持或未被启用。
+				*arguments:
+					*aCommandName：一个 DOMString ，命令的名称。可用命令列表请参阅 命令 。
+						*命令包含：backColor,bold,contentReadOnly,copy,createLink,cut,decreaseFontSize,delete,enableInlineTableEditing,enableObjectResizing,fontName,fontSize,foreColor,formatBlock,forwardDelete,heading,hiliteColor,increaseFontSize,indent,insertBrOnReturn,insertHorizontalRule,insertHTML,insertImage,insertOrderedList,insertUnorderedList,insertParagraph,insertText,italic,justifyCenter,justifyFull,justifyLeft,justifyRight,outdent,paste,redo,removeFormat,selectAll,strikeThrough,subscript,superscript,underline,undo,unlink,useCSS ,styleWithCSS
+					*aShowDefaultUI：一个 Boolean， 是否展示用户界面，一般为 false。Mozilla 没有实现。
+					*aValueArgument：一些命令（例如insertImage）需要额外的参数（insertImage需要提供插入image的url），默认为null。
+			*/
+			// 可以在任何时候使用这些命令来修改富文本区域的外观，如下面的例子所示。
+			/*//转换粗体文本
+			frames["richedit"].document.execCommand("bold", false, null);
+			//转换斜体文本
+			frames["richedit"].document.execCommand("italic", false, null);
+			//创建指向 www.wrox.com 的链接
+			frames["richedit"].document.execCommand("createlink", false,
+			"http://www.wrox.com");
+			//格式化为 1 级标题
+			frames["richedit"].document.execCommand("formatblock", false, "<h1>");*/
+
+
+			// 同样的方法也适用于页面中 contenteditable 属性为"true"的区块，只要把对框架的引用替换成当前窗口的 document 对象即可。
+			//转换粗体文本
+			document.execCommand("bold", false, null);
+			//转换斜体文本
+			document.execCommand("italic", false, null);
+			//创建指向 www.wrox.com 的链接
+			document.execCommand("createlink", false,"http://www.wrox.com");
+			//格式化为 1 级标题
+			document.execCommand("formatblock", false, "<h1>");
+
+
+			// 除了命令之外，还有一些与命令相关的方法。第一个方法就是 queryCommandEnabled()，可以用它来检测是否可以针对当前选择的文本，或者当前插入字符所在位置执行某个命令。这个方法接收一个参数，即要检测的命令。如果当前编辑区域允许执行传入的命令，这个方法返回 true，否则返回 false
+			let result = document.queryCommandEnabled("bold");
+
+			// 另外， queryCommandState()方法用于确定是否已将指定命令应用到了选择的文本。例如，要确定当前选择的文本是否已经转换成了粗体，可以使用如下代码。
+			let isBold = document.queryCommandState("bold");			
+			// 如果此前已经对选择的文本执行了"bold"命令，那么上面的代码会返回 true。一些功能全面的富文本编辑器，正是利用这个方法来更新粗体、斜体等按钮的状态的。
+			
+
+			// 最后一个方法是 queryCommandValue()，用于取得执行命令时传入的值（即前面例子中传给document.execCommand()的第三个参数）。例如，在对一段文本应用"fontsize"命令时如果传入了7，那么下面的代码就会返回"7"：
+			let fontSize = document.queryCommandValue("fontsize");
+			
+			通过这个方法可以确定某个命令是怎样应用到选择的文本的，可以据以确定再对其应用后续命令是否合适
+		}
+	</script>
+</body>
+</html>

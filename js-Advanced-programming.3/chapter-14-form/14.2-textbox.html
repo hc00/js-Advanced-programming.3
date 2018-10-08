@@ -46,8 +46,8 @@
 				var target = EventUtil.getTarget(event);
 				target.select();
 			});*/
-
 			// 将上面的代码应用到文本框之后，只要文本框获得焦点，就会选择其中所有的文本。这种技术能够较大幅度地提升表单的易用性
+			
 			function setFormEleSelect(ele){
 				EventUtil.addHandler(ele, "focus", function(event){
 					event = EventUtil.getEvent(event);
@@ -64,10 +64,12 @@
 			};
 			/*-------------------------------------------------------------------------------------*/
 			//1. 选择（select）事件
-			//与 select()方法对应的，是一个 select 事件。在选择了文本框中的文本时，就会触发 select事件。不过，到底什么时候触发 select 事件，还会因浏览器而异。在 IE9+、 Opera、 Firefox、 Chrome和 Safari 中，只有用户选择了文本（而且要释放鼠标），才会触发 select 事件。而在 IE8 及更早版本中，只要用户选择了一个字母（不必释放鼠标），就会触发 select 事件。另外，在调用 select()方法时也会触发 select 事件。
+			//与 select()方法对应的，是一个 select 事件。在选择了文本框中的文本时，就会触发 select事件。不过，到底什么时候触发 select 事件，还会因浏览器而异。在 IE9+、 Opera、 Firefox、 Chrome和 Safari 中，只有用户选择了文本（而且要释放鼠标），才会触发 select 事件。而在 IE8 及更早版本中，只要用户选择了一个字母（不必释放鼠标），就会触发 select 事件。
+			`另外，在调用 select()方法时也会触发 select 事件。`;
 			EventUtil.addHandler(textbox, "select", function(event){
 				// alert("Text selected" + textbox.value);
 				console.log(getSelectedText(textbox))
+				console.log(window.getSelection().toString(),72,window.getSelection())	
 				// console.log(getSelectedText(event.target))
 			});
 

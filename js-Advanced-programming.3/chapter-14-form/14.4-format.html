@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>表单序列化</title>
+	<style>
+		body,form{
+			margin: 0;
+			padding: 0;
+		}
+		body{
+			background: #9E9E9E;
+		}
+		.form{
+			position: relative;
+		}
+		.form{
+			width: 330px;
+			height: 300px;
+			padding: 15px;
+			background: #fff;
+			border-radius: 15px;
+			margin: auto;
+		    	position: absolute;
+		    	top: 0;
+		    	left: 0;
+		    	right: 0;
+		    	bottom: 0;
+		}
+		label[for]{
+			display: inline-block;
+			width: 80px;
+			margin:0 5px 15px 0;
+		}
+		textarea{
+			margin-bottom: 15px;
+		}
+	</style>
+</head>
+<body>
+	<div class="wrapper">
+		<div class="form">
+			<form action="">
+				<label for="f-username">username:</label><input type="text" name='username' required id='f-username'></label>		<br>
+				<label for="f-password">pasd:</label><input type="password" name='password' required id='f-password'></label>		<br>
+				<label for="">radio:</label>
+					<label >a: <input type="radio" value='a' name='radio' id='f-abc'></label>
+					<label >b: <input type="radio" value='b' name='radio' id='f-abd'></label>	<br>
+				<label for="">checkbox:</label>	 
+					<label >aaa: <input type="checkbox" value='a' name='checkbox' ></label>
+					<label >bbb: <input type="checkbox" value='b' name='checkbox' ></label>	<br>
+				<label for="f-textarea" style="vertical-align: top;">textarea:</label><textarea name="textarea" id="f-textarea" cols="30" rows="5"></textarea>	<br>
+				<p style="text-align: center"><button class="btn" type='button'>btn</button></p>
+			</form>
+			<!-- <form action=""><input type="text"></form> -->
+		</div>
+	</div>
+	<script>
+		/*14.4 表单序列化
+			*随着 Ajax 的出现，表单序列化已经成为一种常见需求（第 21 章将讨论 Ajax）。在 JavaScript 中，可以利用表单字段的 type 属性，连同 name 和 value 属性一起实现对表单的序列化。在编写代码之前，有必须先搞清楚在表单提交期间，浏览器是怎样将数据发送给服务器的
+				*对表单字段的名称和值进行 URL 编码，使用和号（&）分隔。 
+				*不发送禁用的表单字段。 
+				*只发送勾选的复选框和单选按钮。 
+				*不发送 type 为"reset"和"button"的按钮。 
+				*多选选择框中的每个选中的值单独一个条目。 
+				*在单击提交按钮提交表单的情况下，也会发送提交按钮；否则，不发送提交按钮。也包括 type为"image"的<input>元素。 
+				*<select>元素的值，就是选中的<option>元素的 value 特性的值。如果<option>元素没有value 特性，则是<option>元素的文本值
+		*/
+		//在表单序列化过程中，一般不包含任何按钮字段，因为结果字符串很可能是通过其他方式提交的。除此之外的其他上述规则都应该遵循
+		// 以下就是实现表单序列化的代码。
+		function serialize(form){
+			var parts = [],	field = null,i,len,j,optLen,option,optValue;
+			for (i=0, len=form.elements.length; i < len; i++){
+				field = form.elements[i];	//console.log(field.name)
+				switch(field.type){
+					case "select-one":
+					case "select-multiple":
+						if (field.name.length){
+							for (j=0, optLen = field.options.length; j < optLen; j++){
+								option = field.options[j];
+								if (option.selected){
+									optValue = "";
+									if (option.hasAttribute){
+										optValue = (option.hasAttribute("value") ?	option.value : option.text);
+									} else {
+										optValue = (option.attributes["value"].specified ?	option.value : option.text);
+									};
+									parts.push(encodeURIComponent(field.name) + "=" + encodeURIComponent(optValue));
+								};
+							}
+						};
+						break;
+					case undefined: //字段集
+					case "file": //文件输入
+					case "submit": //提交按钮
+					case "reset": //重置按钮
+					case "button": //自定义按钮
+						break;
+					case "radio": //单选按钮
+					case "checkbox": //复选框
+						if (!field.checked){
+							break;
+						}
+					/* 执行默认操作 */
+					default: 						//console.log(field)
+						//不包含没有名字的表单字段
+						if (field.name.length){		//console.log(field)
+							parts.push(encodeURIComponent(field.name) + "=" +
+							encodeURIComponent(field.value));
+						};
+				};
+			};
+			return parts.join("&");
+		};
+
+		`上面这个 serialize()函数首先定义了一个名为 parts 的数组，用于保存将要创建的字符串的各个部分。然后，通过 for 循环迭代每个表单字段，并将其保存在 field 变量中。在获得了一个字段的引用之后，使用 switch 语句检测其 type 属性。序列化过程中最麻烦的就是<select>元素，它可能是单选框也可能是多选框。为此，需要遍历控件中的每一个选项，并在相应选项被选中的情况下向数组中添加一个值。对于单选框，只可能有一个选中项，而多选框则可能有零或多个选中项。这里的代码适用于这两种选择框，至于可选项的数量则是由浏览器控制的。在找到一个选中项之后，需要确定使用什么值。如果不存在 value 特性，或者虽然存在该特性，但值为空字符串，都要使用选项的文本来代替。为检查这个特性，在 DOM 兼容的浏览器中需要使用 hasAttribute()方法，而在 IE 中需要使用特性的 specified 属性。
+
+		如果表单中包含<fieldset>元素， 则该元素会出现在元素集合中，但没有 type 属性。 因此，如果 type属性未定义，则不需要对其进行序列化。同样，对于各种按钮以及文件输入字段也是如此（文件输入字段在表单提交过程中包含文件的内容；但是，这个字段是无法模仿的，序列化时一般都要忽略）。对于单选按钮和复选框，要检查其 checked 属性是否被设置为 false，如果是则退出 switch 语句。如果 checked 属性为 true，则继续执行 default 语句，即将当前字段的名称和值进行编码，然后添加到 parts 数组中。函数的最后一步，就是使用 join()格式化整个字符串，也就是用和号来分隔每一个表单字段`;
+		//最后， serialize()函数会以查询字符串的格式输出序列化之后的字符串
+		
+		var btn = document.querySelector('.btn');
+		btn.onclick = function(event){
+			event = event || window.event;	console.log(event)
+			let form = document.forms[0];
+			console.log(	serialize(form)	);
+		}
+	</script>
+</body>
+</html>

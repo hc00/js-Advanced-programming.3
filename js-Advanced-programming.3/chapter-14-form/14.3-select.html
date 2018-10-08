@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>选择框脚本-选择选项</title>
+</head>
+<body>
+	<div class="wrapper">
+		<div class="form">
+			<form action="">
+				<select name="zaq" id="" >
+					<option value="1">1</option>
+					<option value="2" selected>2</option>
+					<option value="3">3</option>
+					<option value="4">4</option>
+					<option value="5">5</option>
+				</select>
+
+				<select name="" id="selLocations2"></select>
+			</form>
+		</div>
+	</div>
+
+	<script>
+		/*14.3 选择框脚本
+			*选择框是通过<select>和<option>元素创建的。为了方便与这个控件交互，除了所有表单字段共有的属性和方法外， HTMLSelectElement 类型还提供了下列属性和方法。 
+			*add(newOption, relOption)：向控件中插入新<option>元素，其位置在相关项（relOption）之前。 
+			*multiple：布尔值，表示是否允许多项选择；等价于 HTML 中的 multiple 特性。 
+			*options：控件中所有<option>元素的 HTMLCollection。 
+			*remove(index)：移除给定位置的选项。 
+			*selectedIndex：基于 0 的选中项的索引，如果没有选中项，则值为-1。对于支持多选的控件，只保存选中项中第一项的索引。 
+			*size：选择框中可见的行数；等价于 HTML 中的 size 特性。选择框的 type 属性不是"select-one"，就是"select-multiple"，这取决于 HTML 代码中有没有 multiple 特性。选择框的 value 属性由当前选中项决定，相应规则如下。 
+			*如果没有选中的项，则选择框的 value 属性保存空字符串。 
+			*如果有一个选中项，而且该项的 value 特性已经在 HTML 中指定，则选择框的 value 属性等于选中项的 value 特性。即使 value 特性的值是空字符串，也同样遵循此条规则。 
+			*如果有一个选中项，但该项的 value 特性在 HTML 中未指定，则选择框的 value 属性等于该项的文本。 
+			*如果有多个选中项，则选择框的 value 属性将依据前两条规则取得第一个选中项的值
+		*/
+		`在 DOM 中，每个<option>元素都有一个 HTMLOptionElement 对象表示。为便于访问数据，HTMLOptionElement 对象添加了下列属性：
+			index：当前选项在 options 集合中的索引。
+ 			label：当前选项的标签；等价于 HTML 中的 label 特性。
+ 			selected：布尔值，表示当前选项是否被选中。将这个属性设置为 true 可以选中当前选项。
+ 			text：选项的文本。
+ 			value：选项的值（等价于 HTML 中的 value 特性）。
+		在操作选项时，建议最好是使用特定于选项的属性，因为所有浏览器都支持这些属性。
+
+		选择框的 change 事件与其他表单字段的 change 事件触发的条件不一样。其他表单字段的 change 事件是在值被修改且焦点离开当前字段时触发，而选择框的change 事件只要选中了选项就会触发。
+			`;
+		var selectbox = document.forms[0]. elements["zaq"];
+
+		(function(){
+			//推荐
+			let text = selectbox.options[0].text; //选项的文本
+			let value = selectbox.options[0].value; //选项的值			
+		})();
+
+		{
+			/*14.3.1 选择选项*/
+			//对于只允许选择一项的选择框，访问选中项的最简单方式，就是使用选择框的 selectedIndex 属性，如下面的例子所示：
+			let selectedOption = selectbox.options[selectbox.selectedIndex];
+			console.log("Selected index: " + selectbox.selectedIndex + "\nSelected text: " +selectedOption.text + "\nSelected value: " + selectedOption.value);
+
+			//对于可以选择多项的选择框， selectedfIndex 属性就好像只允许选择一项一样。
+			//设置selectedIndex 会导致取消以前的所有选项并选择指定的那一项，而读取 selectedIndex 则只会返回选中项中第一项的索引值			
+			selectbox.selectedIndex = 0;				//选择第一项
+
+			//另一种选择选项的方式，就是取得对某一项的引用，然后将其 selected 属性设置为 true。例如，下面的代码会选中选择框中的第一项：
+			selectbox.options[0].selected = true;	//选择第一项
+
+			`与 selectedIndex 不同，在允许多选的选择框中设置选项的 selected 属性，不会取消对其他选中项的选择，因而可以动态选中任意多个项。但是，如果是在单选选择框中，修改某个选项的 selected 属性则会取消对其他选项的选择。需要注意的是，将 selected 属性设置为 false 对单选选择框没有影响。
+			实际上， selected 属性的作用主要是确定用户选择了选择框中的哪一项。要取得所有选中的项，可以循环遍历选项集合，然后测试每个选项的 selected 属性。`;
+			function getSelectedOptions(selectbox){
+				var result = new Array();
+				var option = null;
+				for (var i=0, len=selectbox.options.length; i < len; i++){
+					option = selectbox.options[i];
+					if (option.selected){
+						result.push(option);
+					}
+				}
+				return result;
+			};
+			console.log(getSelectedOptions(selectbox))
+		};	
+
+		{
+			/*14.3.2 添加选项*/
+			//可以使用 JavaScript 动态创建选项，并将它们添加到选择框中。添加选项的方式有很多，第一种方式就是使用如下所示的 DOM 方法。
+			let newOption = document.createElement("option");
+			newOption.appendChild(document.createTextNode("Option text"));
+			newOption.setAttribute("value", "Option value");
+			selectbox.appendChild(newOption);
+
+
+			//使用选择框的 add()方法添加新选项
+			//DOM 规定这个方法接受两个参数：要添加的新选项和将位于新选项之后的选项。
+			//如果想在列表的最后添加一个选项，应该将第二个参数设置为null。
+			//在 IE 对 add()方法的实现中，第二个参数是可选的，而且如果指定，该参数必须是新选项之后选项的索引。兼容 DOM 的浏览器要求必须指定第二个参数，因此要想编写跨浏览器的代码，就不能只传入一个参数。这时候，为第二个参数传入 undefined，就可以在所有浏览器中都将新选项插入到列表最后了
+			let op = document.createElement('option');
+			op.innerText = '请选择';
+			op.selected = true;
+			// op.value = '1';
+			selectbox.add(op,selectbox.options[0])
+		};
+
+		{
+			/*14.3.3 移除选项*/
+			//与添加选项类似，移除选项的方式也有很多种。首先，可以使用 DOM 的 removeChild()方法，为其传入要移除的选项，
+			selectbox.removeChild(selectbox.options[2]); //移除第三个选项
+
+			//其次，可以使用选择框的 remove()方法。这个方法接受一个参数，即要移除选项的索引
+			selectbox.remove(2); //移除第三个选项
+
+			// 最后一种方式，就是将相应选项设置为 null。这种方式也是 DOM 出现之前浏览器的遗留机制
+			// selectbox.options[0] = null; //移除第一个选项
+			
+			// 要清除选择框中所有的项，需要迭代所有选项并逐个移除它们，如下面的例子所示：
+			function clearSelectbox(selectbox){
+				for(var i=0, len=selectbox.options.length; i < len; i++){
+					selectbox.remove(i);
+				}
+			};
+			// 这个函数每次只移除选择框中的第一个选项。由于移除第一个选项后，所有后续选项都会自动向上移动一个位置，因此重复移除第一个选项就可以移除所有选项了
+		};
+
+		{
+			/*14.3.4 移动和重排选项*/
+			`在 DOM 标准出现之前，将一个选择框中的选项移动到另一个选择框中是非常麻烦的。整个过程要涉及从第一个选择框中移除选项，然后以相同的文本和值创建新选项，最后再将新选项添加到第二个选择框中。
+			而使用 DOM 的 appendChild()方法，就可以将第一个选择框中的选项直接移动到第二个选择框中。我们知道，如果为 appendChild()方法传入一个文档中已有的元素，那么就会先从该元素的父节点中移除它，再把它添加到指定的位置。下面的代码展示了将第一个选择框中的第一个选项移动到第二个选择框中的过程`;
+			let select2 = document.getElementById('selLocations2');
+			select2.appendChild(selectbox.options[4]);
+			//移动选项与移除选项有一个共同之处，即会重置每一个选项的 index 属性
+
+			`重排选项次序的过程也十分类似，最好的方式仍然是使用 DOM 方法。要将选择框中的某一项移动到特定位置，最合适的 DOM 方法就是 insertBefore()； appendChild()方法只适用于将选项添加到选择框的最后`;
+
+			// 要在选择框中向前移动一个选项的位置，可以使用以下代码：
+			var optionToMove = selectbox.options[3];
+			selectbox.insertBefore(optionToMove, selectbox.options[optionToMove.index-1]);		//'请选择',1,5,4
+
+
+			// 类似地，可以使用下列代码将选择框中的选项向后移动一个位置。
+			var optionToMove = selectbox.options[1];
+			selectbox.insertBefore(optionToMove, selectbox.options[optionToMove.index+2]);		//'请选择',5,1,4
+
+		};
+	</script>		
+</body>
+</html>

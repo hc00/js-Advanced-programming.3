@@ -87,15 +87,7 @@
 			/*EventUtil.addHandler(window,'beforecopy',function(event){
 				event = EventUtil.getEvent(event);		console.log('beforecopy',event)
 			});*/
-			EventUtil.addHandler(window,'copy',function(event){
-				event = EventUtil.getEvent(event);						console.log('copy',event)						
-				let copyText = window.getSelection(0).toString();		console.log('选取的复制内容是：'+copyText)
-				let text = '这是修改的复制内容:' + copyText;	
-
-				EventUtil.preventDefault(event);
-				EventUtil.setClipboardText(event,text);	
-				// return text;			
-			});
+			
 			/*EventUtil.addHandler(input,'beforepaste',function(event){
 				event = EventUtil.getEvent(event);		console.log('beforepaste',event)
 				var text = EventUtil.getClipboardText(event);		console.log(text)
@@ -123,12 +115,31 @@
 			/*Firefox、 Safari 和 Chrome 只允许在 onpaste 事件处理程序中访问 getData()方法。
 			由于并非所有浏览器都支持访问剪贴板，所以更简单的做法是屏蔽一或多个剪贴板操作。在支持copy、 cut 和 paste 事件的浏览器中（IE、 Safari、 Chrome 和 Firefox 3 及更高版本），很容易阻止这些事件的默认行为。在 Opera 中，则需要阻止那些会触发这些事件的按键操作，同时还要阻止在文本框中显示上下文菜单*/
 
+			//监听copy事件
+			EventUtil.addHandler(window,'copy',function(event){		
+				event = EventUtil.getEvent(event);						console.log('copy',event,window.selectText)		
+				let copyText;	
+				if(window.getSelection(0).toString()){
+					copyText= window.getSelection(0).toString();
+				}else{
+					copyText = window.selectText;
+				};									
+																			console.log('选取的复制内容是：'+copyText)
+				let text =copyText +'\n' +'复制于：'+new Date();	
+
+				EventUtil.preventDefault(event);
+				EventUtil.setClipboardText(event,text);	
+				// return text;			
+			});
+
+
 			//点击按钮实现复制
 			let btn = document.querySelector('.btn');
-			let box1 = document.querySelector('.box1');
+			
 			EventUtil.addHandler(btn,'click',function(event){			console.time('copy');
+				let box1 = document.querySelector('.box1');
 				let text = box1.innerText;
-				var newInput = document.createElement('input');
+				let newInput = document.createElement('input');
 				newInput.value = text;
 				newInput.setAttribute('readonly', true);
 				document.body.appendChild(newInput);		//console.log(newInput.value.length)
@@ -137,13 +148,22 @@
 				let length = newInput.value.length;
 				newInput.focus();
 				newInput.setSelectionRange(0,length);
-
+		window.selectText = getSelectedText(newInput);
 				// if(document.execCommand('copy')){
-					document.execCommand('copy');				
+					document.execCommand('copy');					//console.log(window.getSelection().toString(),142,getSelectedText(newInput))	
 				// };
 				document.body.removeChild(newInput);
-				text = '';													console.timeEnd('copy');
+				window.selectText = null;
+				box1 = null;												console.timeEnd('copy');
 			});
+
+			function getSelectedText(textbox){
+				if (typeof textbox.selectionStart == "number"){	//console.log(textbox.selectionStart,textbox.selectionEnd)
+					return textbox.value.substring(textbox.selectionStart,textbox.selectionEnd);
+				} else if (document.selection){
+					return document.selection.createRange().text;
+				}
+			};
 			/*document.execCommand()
 				*bool = document.execCommand(aCommandName, aShowDefaultUI, aValueArgument)
 				*return:一个 Boolean ，如果是 false 则表示操作不被支持或未被启用。
