@@ -32,6 +32,12 @@
 	</div>
 	<script src='./EventUtil.js'></script>
 	<script>
+		/*function throttle(method, context) {
+			clearTimeout(method.tId);
+			method.tId= setTimeout(function(){
+				method.call(context);
+			}, 100);
+		};*/
 		{
 			/*13.4 事件类型
 			*Web 浏览器中可能发生的事件有很多类型。如前所述，不同的事件类型具有不同的信息，而“DOM3级事件”规定了以下几类事件
@@ -154,6 +160,12 @@
 					*在混杂模式下，可以通过<body>元素的 scrollLeft 和 scrollTop 来监控到这一变化；
 					*而在标准模式下，除 Safari 之外的所有浏览器都会通过<html>元素来反映这一变化（Safari 仍然基于<body>跟踪滚动位置）
 				*/
+				// function throttle(method, context) {
+				// 	clearTimeout(method.tId);
+				// 	method.tId= setTimeout(function(){
+				// 		method.call(context);
+				// 	}, 500);
+				// };
 				function scroll(event){
 					if (document.compatMode == "CSS1Compat"){	console.log(event)
 						alert(document.documentElement.scrollTop);

@@ -29,11 +29,14 @@ const EventUtil = {
 	},
 	//阻止默认行为
 	preventDefault: function(event){
-		if (event.preventDefault){
-			event.preventDefault();
-		} else {
-			event.returnValue = false;
-		}
+		 if (event.preventDefault) {
+              //阻止默认浏览器动作(W3C) 
+              event.preventDefault();
+          }else {
+              //IE中阻止函数器默认动作的方式 
+              event.returnValue = false;
+              return false;
+          };
 	},
 	//组织冒泡
 	stopPropagation: function(event){

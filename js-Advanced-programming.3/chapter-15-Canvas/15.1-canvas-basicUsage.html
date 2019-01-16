@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Canvas基本用法</title>
+	<style>
+		
+		canvas{
+			width: 600px;
+			height: 600px;
+			margin: 10px auto;
+		}
+	</style>
+</head>
+<body>
+	<div class="wrapper">
+		<div class="box">
+			<canvas>A drawing of something.</canvas>
+		</div>
+	</div>
+	<script>
+		let cas = document.querySelector('canvas');
+		let context = cas.getContext("2d");
+		context.globalCompositeOperation;
+		let imgData = context.getImageData(0,0,200,200).data;
+
+	</script>
+</body>
+</html>
