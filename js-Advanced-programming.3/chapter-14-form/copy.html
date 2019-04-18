@@ -3,22 +3,39 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Document</title>
+    <style>
+        /* .oInput{
+            display: none;
+        } */
+    </style>
 </head>
 <body>
 	<div cols="20" id="biao1" contenteditable>12345678</div>
 	<input type="button" onClick="copyUrl2()" value="点击复制代码" />
+    <!-- <input type="hidden" class=""> -->
+    <!-- <input type="text" class='oInput'> -->
 	<script>
 		function copyUrl2(){
        		var Url2=document.getElementById("biao1").innerText;
-        		var oInput = document.createElement('input');
-        		oInput.value = Url2;
-        		document.body.appendChild(oInput);
-        		oInput.select(); // 选择对象
-        		document.execCommand("Copy"); // 执行浏览器复制命令
-        		oInput.className = 'oInput';
-        		oInput.style.display='none';
-        		alert('复制成功');
-    		}
+    		var oInput = document.createElement('input');
+            // var oInput = document.querySelector('input[type=hidden]')
+            // var oInput = document.querySelector('.oInput');
+    		oInput.value = Url2;
+    		document.body.appendChild(oInput);
+    		oInput.select(); // 选择对象
+    		document.execCommand("Copy"); // 执行浏览器复制命令
+            oInput.remove();
+    		// oInput.className = 'oInput';
+    		// oInput.style.display='none';
+    		alert('复制成功');
+		}
+        try {
+            // statements
+        } catch(e) {
+            // statements
+            console.log(e);
+        }
+        
 	</script>
 </body>
 </html>
